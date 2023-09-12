@@ -16,3 +16,27 @@
 
 # Cuando clonamos el repo debemos instalar npm, mediante = npm install
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------
+
+Equipo de Colaboradores de TuOficio.com
+
+* Franco Maldonado
+* Alberto Mamani 
+* Emiliano Paz
+* Martin Perez
+* JuanPablo Avila
+* Gustavo García
+
