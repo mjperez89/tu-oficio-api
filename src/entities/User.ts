@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
-import { ProfesionsEnum } from "./ProfesionsEnum";
+import { ProfessionsEnum } from "./ProfessionsEnum";
 
 @Entity()
 export class User {
@@ -16,7 +16,7 @@ export class User {
     @Column()
     age: number
 
-    @Column()
+    @Column({type: "bigint"})
     phoneNumber: number
 
     @Column()
@@ -35,9 +35,9 @@ export class User {
     userName: string
 
     @Column()
-    profesion: ProfesionsEnum;
+    profession: ProfessionsEnum;
 
-    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, profesion: ProfesionsEnum) {
+    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, profession: ProfessionsEnum) {
         this.firstName = firstName
         this.lastName = lastName
         this.age = age
@@ -47,7 +47,7 @@ export class User {
         this.birthDate = birthDate
         this.dni = dni
         this.userName = userName
-        this.profesion = profesion
+        this.profession = profession
     }
 
 

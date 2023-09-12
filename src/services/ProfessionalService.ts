@@ -1,6 +1,6 @@
 import { getCustomRepository } from "typeorm";
-import { ProfesionalRepository } from "../repositories/ProfesionalRepository";
-import { Profesional } from "../entities/Profesional";
+import { ProfessionalRepository } from "../repositories/ProfessionalRepository";
+import { Professional } from "../entities/Professional";
 
 interface IProfessionalCreate {
     id?: number;
@@ -25,55 +25,55 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
         throw new Error("Por favor complete todos los datos.");
     }
 
-    const profesionalRepository = getCustomRepository(ProfesionalRepository);
+    const professionalRepository = getCustomRepository(ProfessionalRepository);
 
-    const profesionalAlreadyExists = await profesionalRepository.findOne({dni});
+    const professionalAlreadyExists = await professionalRepository.findOne({dni});
 
-    if (profesionalAlreadyExists) {
+    if (professionalAlreadyExists) {
         throw new Error("Profesional ya existe.");
     }
 
-    const emailAlreadyExists = await profesionalRepository.findOne({email});
+    const emailAlreadyExists = await professionalRepository.findOne({email});
 
     if (emailAlreadyExists) {
         throw new Error("Email ya existe.");
     }
 
-    const client = profesionalRepository.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
+    const professional = professionalRepository.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
 
-    await profesionalRepository.save(client);
+    await professionalRepository.save(professional);
     
-    return client;
+    return professional;
 }
 
 
 async delete(id: number) {
-    const clientRepository = getCustomRepository(ClientRepository);
+    const professionalRepository = getCustomRepository(ProfessionalRepository);
 
-    const client = await clientRepository
+    const professional = await professionalRepository
     .createQueryBuilder()
     .delete()
-    .from(Client)
+    .from(Professional)
     .where("id = :id", { id })
     .execute();
 
-    return client;
+    return professional;
 }
 
 async getData(id: number) {
 
-    const clientRepository = getCustomRepository(ClientRepository);
+    const professionalRepository = getCustomRepository(ProfessionalRepository);
 
-    const client = await clientRepository.findOne({id});
+    const professional = await professionalRepository.findOne({id});
 
-    return client;
+    return professional;
 
 }
 
 async list() {
-    const clientRepository = getCustomRepository(ClientRepository);
+    const professionalRepository = getCustomRepository(ProfessionalRepository);
 
-    const clients = await clientRepository.find();
+    const clients = await professionalRepository.find();
 
     return clients;
 
@@ -84,9 +84,9 @@ async search(search: string) {
         throw new Error("Por favor rellene todos los campos");
     }
 
-const clientRepository = getCustomRepository(ClientRepository);
+const professionalRepository = getCustomRepository(ProfessionalRepository);
 
-const client = await clientRepository
+const professional = await professionalRepository
     .createQueryBuilder()
     .where("firstName like :search", { search: `%${search}%` })
     .orWhere("lastName like :search", { search: `%${search}%` })
@@ -97,23 +97,23 @@ const client = await clientRepository
     .orWhere("address like :search", { search: `%${search}%` })
     .getMany();
 
-    return client;
+    return professional;
 }
 
-async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IClientCreate) {
-    const clientRepository = getCustomRepository(ClientRepository);
+async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IProfessionalCreate) {
+    const professionalRepository = getCustomRepository(ProfessionalRepository);
 
-    const client = await clientRepository
+    const professional = await professionalRepository
     .createQueryBuilder()
-    .update(Client)
+    .update(Professional)
     .set({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName})
     .where("id = :id", { id })
     .execute();
 
-    return client;
+    return professional;
 }
 
 }
 
-export { ClientService };
-export const clientService = new ClientService();
+export { ProfessionalService };
+export const professionalService = new ProfessionalService();
