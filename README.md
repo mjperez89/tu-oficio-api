@@ -10,3 +10,33 @@
 # Instalar Dependencias de Typescript y React = npm install @types/react @types/react-dom --save-dev
 # Instalar Express = npm install express --save
 
+
+
+-----------------------------------------------------------------------
+
+# Cuando clonamos el repo debemos instalar npm, mediante = npm install
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------
+
+Equipo de Colaboradores de TuOficio.com
+
+* Franco Maldonado
+* Alberto Mamani 
+* Emiliano Paz
+* Martin Perez
+* JuanPablo Avila
+* Gustavo García
+
