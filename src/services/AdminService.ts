@@ -1,9 +1,9 @@
 import { getCustomRepository } from "typeorm";
-import { ClientRepository } from "../repositories/ClientRepository";
-import { Client } from "../entities/Client";
+import { AdminRepository } from "../repositories/AdminRepository";
+import { Admin } from "../entities/Admin";
 import { get } from "http";
 
-interface IClientCreate {
+interface IAdminCreate {
     id?: number;
     firstName: string;
     lastName: string;
@@ -19,62 +19,62 @@ interface IClientCreate {
 
 class AdminService {  
 
-async create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IClientCreate) {
+async create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IAdminCreate) {
     if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
         throw new Error("Por favor complete todos los datos.");
     }
 
-    const clientRepository = getCustomRepository(ClientRepository);
+    const adminRepository = getCustomRepository(AdminRepository);
 
-    const clientAlreadyExists = await clientRepository.findOne({dni});
+    const adminAlreadyExists = await adminRepository.findOne({dni});
 
-    if (clientAlreadyExists) {
-        throw new Error("Cliente ya existe.");
+    if (adminAlreadyExists) {
+        throw new Error("Admin ya existe.");
     }
 
-    const emailAlreadyExists = await clientRepository.findOne({email});
+    const emailAlreadyExists = await adminRepository.findOne({email});
 
     if (emailAlreadyExists) {
         throw new Error("Email ya existe.");
     }
 
-    const client = clientRepository.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
+    const admin = adminRepository.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
 
-    await clientRepository.save(client);
+    await adminRepository.save(admin);
     
-    return client;
+    return admin;
 }
 
 
 async delete(id: number) {
-    const clientRepository = getCustomRepository(ClientRepository);
+    const adminRepository = getCustomRepository(AdminRepository);
 
-    const client = await clientRepository
+    const admin = await adminRepository
     .createQueryBuilder()
     .delete()
-    .from(Client)
+    .from(Admin)
     .where("id = :id", { id })
     .execute();
 
-    return client;
+    return admin;
 }
 
 async getData(id: number) {
 
-    const clientRepository = getCustomRepository(ClientRepository);
+    const adminRepository = getCustomRepository(AdminRepository);
 
-    const client = await clientRepository.findOne({id});
+    const admin = await adminRepository.findOne({id});
 
-    return client;
+    return admin;
 
 }
 
 async list() {
-    const clientRepository = getCustomRepository(ClientRepository);
+    const adminRepository = getCustomRepository(AdminRepository);
 
-    const clients = await clientRepository.find();
+    const admins = await adminRepository.find();
 
-    return clients;
+    return admins;
 
 }
 
@@ -83,9 +83,9 @@ async search(search: string) {
         throw new Error("Por favor rellene todos los campos");
     }
 
-const clientRepository = getCustomRepository(ClientRepository);
+const adminRepository = getCustomRepository(AdminRepository);
 
-const client = await clientRepository
+const admin = await adminRepository
     .createQueryBuilder()
     .where("firstName like :search", { search: `%${search}%` })
     .orWhere("lastName like :search", { search: `%${search}%` })
@@ -96,23 +96,23 @@ const client = await clientRepository
     .orWhere("address like :search", { search: `%${search}%` })
     .getMany();
 
-    return client;
+    return admin;
 }
 
-async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IClientCreate) {
-    const clientRepository = getCustomRepository(ClientRepository);
+async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IAdminCreate) {
+    const adminRepository = getCustomRepository(AdminRepository);
 
-    const client = await clientRepository
+    const admin = await adminRepository
     .createQueryBuilder()
-    .update(Client)
+    .update(Admin)
     .set({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName})
     .where("id = :id", { id })
     .execute();
 
-    return client;
+    return admin;
 }
 
 }
 
-export { ClientService };
-export const clientService = new ClientService();
+export { AdminService };
+export const adminService = new AdminService();
