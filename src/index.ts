@@ -1,11 +1,22 @@
 import { AppDataSource } from "./data-source"
-import { ProfessionsEnum } from "./entities/ProfessionsEnum"
+import { RolesEnum } from "./entities/RolesEnum"
 import { User } from "./entities/User"
 
 AppDataSource.initialize().then(async () => {
 
     console.log("Inserting a new user into the database...")
-    const user = new User("Martin","Perez",34,2615153207,"jonathanmartinperez1989@gmail.com","Coquimbito, Maipu",new Date(1989,1,17),34256729,"jmperez",ProfessionsEnum.Admin)
+    const user = new User(
+        "Martin",
+        "Perez",
+        34,
+        2615153207,
+        "jonathanmartinperez1989@gmail.com",
+        "Coquimbito, Maipu",
+        new Date(1989, 1, 17),
+        34256729,
+        "jmperez",
+        RolesEnum.ADMIN
+    );
     await AppDataSource.manager.save(user)
     console.log("Saved a new user with id: " + user.id)
 
