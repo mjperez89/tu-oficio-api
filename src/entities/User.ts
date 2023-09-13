@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
-import { ProfesionsEnum } from "./ProfesionsEnum";
+import { RolesEnum } from "./RolesEnum";
 
-@Entity()
+@Entity({ name: "users" })
 export class User {
 
     @PrimaryGeneratedColumn()
@@ -16,7 +16,7 @@ export class User {
     @Column()
     age: number
 
-    @Column()
+    @Column({ type: "bigint" })
     phoneNumber: number
 
     @Column()
@@ -34,10 +34,10 @@ export class User {
     @Column()
     userName: string
 
-    @Column()
-    profesion: ProfesionsEnum;
+    @Column({ type: "enum", enum: RolesEnum, default: RolesEnum.CLIENT })
+    role: RolesEnum;
 
-    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, profesion: ProfesionsEnum) {
+    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, role: RolesEnum) {
         this.firstName = firstName
         this.lastName = lastName
         this.age = age
@@ -47,7 +47,7 @@ export class User {
         this.birthDate = birthDate
         this.dni = dni
         this.userName = userName
-        this.profesion = profesion
+        this.role = role
     }
 
 
