@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 import { RolesEnum } from "./RolesEnum";
 
 @Entity({ name: "users" })
-export class User {
+export abstract class User {
 
     @PrimaryGeneratedColumn()
     id: number

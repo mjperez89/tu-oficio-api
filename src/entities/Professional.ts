@@ -17,8 +17,25 @@ export class Professional extends User {
     @Column()
     yearsOfExperience: number
 
-    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, role: RolesEnum) {
+    constructor(
+        firstName: string, 
+        lastName: string, 
+        age: number, 
+        phoneNumber: number, 
+        email: string, 
+        address: string, 
+        birthDate: Date, 
+        dni: number, 
+        userName: string, 
+        role: RolesEnum,
+        registrationNumber: number,
+        specialty: string,
+        yearsOfExperience: number
+        ) {
         super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, role)
+            this.registrationNumber = registrationNumber;
+            this.specialty = specialty;
+            this.yearsOfExperience = yearsOfExperience;
     }
     
 }
