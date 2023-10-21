@@ -1,12 +1,22 @@
+import express = require("express");
+import bodyParser = require("body-parser")
 import { AppDataSource } from "./data-source"
 import { Admin } from "./entities/Admin"
 import { Professional } from "./entities/Professional"
 import { RolesEnum } from "./entities/RolesEnum"
-import { User } from "./entities/User"
+import { adminRoutes } from "./routes/AdminRoutes"
+
+const app = express();
+const port = 3000;
+
+app.use(bodyParser.json());
+app.use(adminRoutes);
+
+app.listen(port, () => {
+  console.log(`Aplicación escuchando en el puerto ${port}`);
+});
 
 AppDataSource.initialize().then(async () => {
-
-    
     console.log("Inserting a new admin into the database...")
     const admin = new Admin(
         "Martin",

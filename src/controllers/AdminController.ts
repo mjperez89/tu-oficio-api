@@ -19,7 +19,7 @@ class AdminController {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
 
         try {
-            await this.adminService.create({
+            const admin=await this.adminService.create({
                 firstName,
                 lastName,
                 age,
@@ -30,15 +30,11 @@ class AdminController {
                 dni,
                 userName
 
-            }).then(() => {
-                request.flash("success", "Admin creado con éxito")
-                response.redirect("/admins")
             });
+            response.status(200).json(admin)
 
         } catch (err) {
-            request.flash("error", "Error al crear el admin", err.toString());
-            console.log(request.body)
-            response.redirect("/admins");
+            console.log("error cldo"+ err)
 
         }
 
@@ -49,20 +45,18 @@ class AdminController {
 
         try {
             await this.adminService.delete(id).then(() => {
-                request.flash("success", "Admin eliminado con éxito")
                 response.redirect("/admins")
             });
 
         } catch (err) {
-            request.flash("error", "Error al eliminar el Admin", err.toString());
             response.redirect("/admins");
 
         }
     }
     
     async handleGetAdminData(request: Request, response: Response) {
-        let { id } = request.query;
-        id = id.toString();
+        let { requestId } = request.query;
+        const id = parseInt(requestId.toString());
 
         const admin = await this.adminService.getData(id);
 
@@ -89,7 +83,6 @@ class AdminController {
                 search: search
             });
         } catch (err) {
-            request.flash("error", "Error al crear el admin", err.toString());
             response.redirect("/admins");
 
         }
@@ -110,12 +103,10 @@ class AdminController {
                 dni,
                 userName
             }).then(() => {
-                request.flash("success", "Admin actualizado con éxito")
                 response.redirect("/admins")
 
             });
         } catch (err) {
-            request.flash("error", "Error al crear el admin", err.toString());
             response.redirect("/admins");
         }
 

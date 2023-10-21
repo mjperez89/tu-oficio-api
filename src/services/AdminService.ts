@@ -23,24 +23,26 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
     if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
         throw new Error("Por favor complete todos los datos.");
     }
-
+    console.log("acaba de entrar al service")
     const adminRepository = getCustomRepository(AdminRepository);
 
-    const adminAlreadyExists = await adminRepository.findOne({dni});
+    // const adminAlreadyExists = await adminRepository.findOne({where:{dni:dni}});
 
-    if (adminAlreadyExists) {
-        throw new Error("Admin ya existe.");
-    }
+    // if (adminAlreadyExists) {
+    //     throw new Error("Admin ya existe.");
+    // }
 
-    const emailAlreadyExists = await adminRepository.findOne({email});
+    // const emailAlreadyExists = await adminRepository.findOne({where:{email:email}});
 
-    if (emailAlreadyExists) {
-        throw new Error("Email ya existe.");
-    }
-
+    // if (emailAlreadyExists) {
+    //     throw new Error("Email ya existe.");
+    // }
+    // console.log("no encontro nada y va a crear")
     const admin = adminRepository.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
-
+    
     await adminRepository.save(admin);
+    console.log("se creo y guardo en la db")
+
     
     return admin;
 }
@@ -63,7 +65,7 @@ async getData(id: number) {
 
     const adminRepository = getCustomRepository(AdminRepository);
 
-    const admin = await adminRepository.findOne({id});
+    const admin = await adminRepository.findOne({where:{id:id}});
 
     return admin;
 

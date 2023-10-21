@@ -6,7 +6,7 @@ const adminRoutes = Router();
 const adminController  = new AdminController();
 
 adminRoutes.get("/admin", auth.isLoggedIn, adminController.handleListAdmins);
-adminRoutes.post("/add-admin", auth.isLoggedIn, adminController.handleCreateAdmin);
+adminRoutes.post("/add-admin", adminController.handleCreateAdmin);
 adminRoutes.get("/searchAdmin", auth.isLoggedIn, adminController.handleSearchAdmin);
 adminRoutes.post("/edit-admin", auth.isLoggedIn, adminController.handleUpdateAdmin);
 adminRoutes.get("/editAdmin", auth.isLoggedIn, adminController.handleGetAdminData);
