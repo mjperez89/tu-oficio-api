@@ -1,7 +1,8 @@
 import { getCustomRepository } from "typeorm";
 import { AdminRepository } from "../repositories/AdminRepository";
 import { Admin } from "../entities/Admin";
-import { get } from "http";
+import { AppDataSource } from "../index"
+import { RolesEnum } from "../entities/RolesEnum";
 
 interface IAdminCreate {
     id?: number;
@@ -24,7 +25,7 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
         throw new Error("Por favor complete todos los datos.");
     }
     console.log("acaba de entrar al service")
-    const adminRepository = getCustomRepository(AdminRepository);
+    const adminRepository = AppDataSource.getRepository(Admin)
 
     // const adminAlreadyExists = await adminRepository.findOne({where:{dni:dni}});
 
@@ -38,13 +39,15 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
     //     throw new Error("Email ya existe.");
     // }
     // console.log("no encontro nada y va a crear")
-    const admin = adminRepository.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
     
-    await adminRepository.save(admin);
+    const adm = new Admin(firstName,lastName,age,phoneNumber,email,address,birthDate,dni,userName,RolesEnum.ADMIN)
+    //const admin = AppDataSource.manager.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
+    
+    await adminRepository.save(adm);
     console.log("se creo y guardo en la db")
 
     
-    return admin;
+    return adm;
 }
 
 
