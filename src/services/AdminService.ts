@@ -27,18 +27,18 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
     console.log("acaba de entrar al service")
     const adminRepository = AppDataSource.getRepository(Admin)
 
-    // const adminAlreadyExists = await adminRepository.findOne({where:{dni:dni}});
+    const adminAlreadyExists = await adminRepository.findOne({where:{dni:dni}});
 
-    // if (adminAlreadyExists) {
-    //     throw new Error("Admin ya existe.");
-    // }
+    if (adminAlreadyExists) {
+        throw new Error("Admin ya existe.");
+    }
 
-    // const emailAlreadyExists = await adminRepository.findOne({where:{email:email}});
+    const emailAlreadyExists = await adminRepository.findOne({where:{email:email}});
 
-    // if (emailAlreadyExists) {
-    //     throw new Error("Email ya existe.");
-    // }
-    // console.log("no encontro nada y va a crear")
+    if (emailAlreadyExists) {
+        throw new Error("Email ya existe.");
+    }
+    console.log("no encontro nada y va a crear")
     
     const adm = new Admin(firstName,lastName,age,phoneNumber,email,address,birthDate,dni,userName,RolesEnum.ADMIN)
     //const admin = AppDataSource.manager.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});

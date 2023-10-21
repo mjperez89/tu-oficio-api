@@ -34,7 +34,8 @@ class AdminController {
             response.status(200).json(admin)
 
         } catch (err) {
-            console.log("error cldo"+ err)
+            console.log("error cldo "+ err)
+            response.status(400).send("" + err)
 
         }
 
