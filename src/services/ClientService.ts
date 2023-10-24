@@ -1,7 +1,8 @@
 import { getCustomRepository } from "typeorm";
 import { ClientRepository } from "../repositories/ClientRepository";
 import { Client } from "../entities/Client";
-import { get } from "http";
+import { AppDataSource } from "../index"
+import { RolesEnum } from "../entities/RolesEnum";
 
 interface IClientCreate {
     id?: number;
@@ -24,22 +25,22 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
         throw new Error("Por favor complete todos los datos.");
     }
 
-    const clientRepository = getCustomRepository(ClientRepository);
+    const clientRepository = AppDataSource.getRepository(Client)
 
-    const clientAlreadyExists = await clientRepository.findOne({dni});
+    const clientAlreadyExists = await clientRepository.findOne({where:{dni:dni}});
 
     if (clientAlreadyExists) {
         throw new Error("Cliente ya existe.");
     }
 
-    const emailAlreadyExists = await clientRepository.findOne({email});
+    const emailAlreadyExists = await clientRepository.findOne({where:{email:email}});
 
     if (emailAlreadyExists) {
         throw new Error("Email ya existe.");
     }
 
-    const client = clientRepository.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
-
+    const client = new Client(firstName,lastName,age,phoneNumber,email,address,birthDate,dni,userName,RolesEnum.CLIENT)
+    
     await clientRepository.save(client);
     
     return client;
@@ -47,7 +48,7 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
 
 
 async delete(id: number) {
-    const clientRepository = getCustomRepository(ClientRepository);
+    const clientRepository = AppDataSource.getRepository(Client);
 
     const client = await clientRepository
     .createQueryBuilder()
@@ -61,7 +62,7 @@ async delete(id: number) {
 
 async getData(id: number) {
 
-    const clientRepository = getCustomRepository(ClientRepository);
+    const clientRepository = AppDataSource.getRepository(Client);
 
     const client = await clientRepository.findOne({id});
 
@@ -70,7 +71,7 @@ async getData(id: number) {
 }
 
 async list() {
-    const clientRepository = getCustomRepository(ClientRepository);
+    const clientRepository = AppDataSource.getRepository(Client);
 
     const clients = await clientRepository.find();
 
@@ -83,7 +84,7 @@ async search(search: string) {
         throw new Error("Por favor rellene todos los campos");
     }
 
-const clientRepository = getCustomRepository(ClientRepository);
+const clientRepository = AppDataSource.getRepository(Client);
 
 const client = await clientRepository
     .createQueryBuilder()
@@ -100,7 +101,8 @@ const client = await clientRepository
 }
 
 async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IClientCreate) {
-    const clientRepository = getCustomRepository(ClientRepository);
+    
+    const clientRepository = AppDataSource.getRepository(Client);
 
     const client = await clientRepository
     .createQueryBuilder()

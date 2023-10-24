@@ -24,7 +24,7 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
     if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
         throw new Error("Por favor complete todos los datos.");
     }
-    console.log("acaba de entrar al service")
+
     const adminRepository = AppDataSource.getRepository(Admin)
 
     const adminAlreadyExists = await adminRepository.findOne({where:{dni:dni}});
@@ -38,13 +38,10 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
     if (emailAlreadyExists) {
         throw new Error("Email ya existe.");
     }
-    console.log("no encontro nada y va a crear")
     
     const adm = new Admin(firstName,lastName,age,phoneNumber,email,address,birthDate,dni,userName,RolesEnum.ADMIN)
-    //const admin = AppDataSource.manager.create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName});
     
     await adminRepository.save(adm);
-    console.log("se creo y guardo en la db")
 
     
     return adm;
@@ -52,7 +49,7 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
 
 
 async delete(id: number) {
-    const adminRepository = getCustomRepository(AdminRepository);
+    const adminRepository = AppDataSource.getRepository(Admin)
 
     const admin = await adminRepository
     .createQueryBuilder()
@@ -66,7 +63,7 @@ async delete(id: number) {
 
 async getData(id: number) {
 
-    const adminRepository = getCustomRepository(AdminRepository);
+    const adminRepository = AppDataSource.getRepository(Admin)
 
     const admin = await adminRepository.findOne({where:{id:id}});
 
@@ -75,7 +72,7 @@ async getData(id: number) {
 }
 
 async list() {
-    const adminRepository = getCustomRepository(AdminRepository);
+    const adminRepository = AppDataSource.getRepository(Admin)
 
     const admins = await adminRepository.find();
 
@@ -88,7 +85,7 @@ async search(search: string) {
         throw new Error("Por favor rellene todos los campos");
     }
 
-const adminRepository = getCustomRepository(AdminRepository);
+const adminRepository = AppDataSource.getRepository(Admin)
 
 const admin = await adminRepository
     .createQueryBuilder()
@@ -105,8 +102,8 @@ const admin = await adminRepository
 }
 
 async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IAdminCreate) {
-    const adminRepository = getCustomRepository(AdminRepository);
-
+    
+    const adminRepository = AppDataSource.getRepository(Admin)
     const admin = await adminRepository
     .createQueryBuilder()
     .update(Admin)
