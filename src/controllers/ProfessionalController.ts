@@ -19,7 +19,7 @@ class ProfessionalController {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, registrationNumber, specialty, yearsOfExperience } = request.body;
 
         try {
-            await this.professionalService.create({
+            const professional = await this.professionalService.create({
                 firstName,
                 lastName,
                 age,
@@ -34,15 +34,12 @@ class ProfessionalController {
                 yearsOfExperience
 
             }).then(() => {
-                request.flash("success", "Profesional creado con éxito")
-                response.redirect("/professionals")
+                response.status(200).json(professional)
             });
 
         } catch (err) {
-            request.flash("error", "Error al crear el profesional", err.toString());
-            console.log(request.body)
-            response.redirect("/professionals");
-
+            console.log("error creando prof "+ err)
+            response.status(400).send("" + err)
         }
 
     }
@@ -52,20 +49,18 @@ class ProfessionalController {
 
         try {
             await this.professionalService.delete(id).then(() => {
-                request.flash("success", "Profesional eliminado con éxito")
                 response.redirect("/professionals")
             });
 
         } catch (err) {
-            request.flash("error", "Error al eliminar el Profesional", err.toString());
-            response.redirect("/professionals");
-
+            console.log("error delete prof "+ err)
+            response.status(400).send("" + err)
         }
     }
 
     async handleGetProfessionalData(request: Request, response: Response) {
-        let { id } = request.query;
-        id = id.toString();
+        let { requestId } = request.query;
+        const id = parseInt(requestId.toString());
 
         const profesional = await this.professionalService.getData(id);
 
@@ -92,16 +87,15 @@ class ProfessionalController {
                 search: search
             });
         } catch (err) {
-            request.flash("error", "Error al crear el profesional", err.toString());
-            response.redirect("/professionals");
-
+            console.log("error search prof"+ err)
+            response.status(400).send("" + err)
         }
     }
     async handleUpdateProfessional(request: Request, response: Response) {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, registrationNumber, specialty, yearsOfExperience } = request.body;
 
         try {
-            await this.professionalService.update({
+            const professional = await this.professionalService.update({
                 firstName,
                 lastName,
                 age,
@@ -115,13 +109,11 @@ class ProfessionalController {
                 specialty,
                 yearsOfExperience
             }).then(() => {
-                request.flash("success", "Profesional actualizado con éxito")
-                response.redirect("/professionals")
-
+                response.status(200).json(professional)
             });
         } catch (err) {
-            request.flash("error", "Error al crear el profesional", err.toString());
-            response.redirect("/professionals");
+            console.log("error update prof "+ err)
+            response.status(400).send("" + err)
         }
 
     }

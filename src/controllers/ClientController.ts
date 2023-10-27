@@ -19,7 +19,7 @@ class ClientController {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
 
         try {
-            await this.clientService.create({
+            const client = await this.clientService.create({
                 firstName,
                 lastName,
                 age,
@@ -31,14 +31,12 @@ class ClientController {
                 userName
 
             }).then(() => {
-                request.flash("success", "Cliente creado con éxito")
-                response.redirect("/clients")
+                response.status(200).json(client)
             });
 
         } catch (err) {
-            request.flash("error", "Error al crear el cliente", err.toString());
-            console.log(request.body)
-            response.redirect("/clients");
+            console.log("error creando client "+ err)
+            response.status(400).send("" + err)
 
         }
 
@@ -49,20 +47,18 @@ class ClientController {
 
         try {
             await this.clientService.delete(id).then(() => {
-                request.flash("success", "Cliente eliminado con éxito")
                 response.redirect("/clients")
             });
 
         } catch (err) {
-            request.flash("error", "Error al eliminar el Cliente", err.toString());
-            response.redirect("/clients");
-
+            console.log("error delete client "+ err)
+            response.status(400).send("" + err)
         }
     }
     
     async handleGetClientData(request: Request, response: Response) {
-        let { id } = request.query;
-        id = id.toString();
+        let { requestId } = request.query;
+        const id = parseInt(requestId.toString());
 
         const cliente = await this.clientService.getData(id);
 
@@ -89,8 +85,8 @@ class ClientController {
                 search: search
             });
         } catch (err) {
-            request.flash("error", "Error al crear el cliente", err.toString());
-            response.redirect("/clients");
+            console.log("error search client"+ err)
+            response.status(400).send("" + err)
 
         }
     }
@@ -99,7 +95,7 @@ class ClientController {
 
 
         try {
-            await this.clientService.update({
+            const client = await this.clientService.update({
                 firstName,
                 lastName,
                 age,
@@ -110,13 +106,11 @@ class ClientController {
                 dni,
                 userName
             }).then(() => {
-                request.flash("success", "Cliente actualizado con éxito")
-                response.redirect("/clients")
-
+                response.status(200).json(client)
             });
         } catch (err) {
-            request.flash("error", "Error al crear el cliente", err.toString());
-            response.redirect("/clients");
+            console.log("error update client "+ err)
+            response.status(400).send("" + err)
         }
 
     }

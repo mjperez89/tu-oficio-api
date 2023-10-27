@@ -5,13 +5,14 @@ import auth from "../../lib/auth";
 const professionalRoutes = Router();
 const professionalController  = new ProfessionalController();
 
-professionalRoutes.get("/professional", auth.isLoggedIn, professionalController.handleListProfessionals);
-professionalRoutes.get("professional/add-professional", auth.isLoggedIn, (request, response) => {
+// deshabilitamos temporalmente auth.isLoggedIn hasta definir el método de autenticación
+professionalRoutes.get("/professional", professionalController.handleListProfessionals);
+professionalRoutes.get("professional/add-professional", (request, response) => {
     response.render("professional/addprofessional")});
-professionalRoutes.post("/add-professional", auth.isLoggedIn, professionalController.handleCreateProfessional);
-professionalRoutes.get("/searchProfessional", auth.isLoggedIn, professionalController.handleSearchProfessional);
-professionalRoutes.post("/edit-professional", auth.isLoggedIn, professionalController.handleUpdateProfessional);
-professionalRoutes.get("/editProfessional", auth.isLoggedIn, professionalController.handleGetProfessionalData);
-professionalRoutes.post("/delete-professional", auth.isLoggedIn, professionalController.handleDeleteProfessional);
+professionalRoutes.post("/add-professional", professionalController.handleCreateProfessional);
+professionalRoutes.get("/searchProfessional", professionalController.handleSearchProfessional);
+professionalRoutes.post("/edit-professional", professionalController.handleUpdateProfessional);
+professionalRoutes.get("/editProfessional", professionalController.handleGetProfessionalData);
+professionalRoutes.post("/delete-professional", professionalController.handleDeleteProfessional);
 
 export { professionalRoutes };

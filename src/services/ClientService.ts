@@ -64,7 +64,7 @@ async getData(id: number) {
 
     const clientRepository = AppDataSource.getRepository(Client);
 
-    const client = await clientRepository.findOne({id});
+    const client = await clientRepository.findOne({where:{id:id}});
 
     return client;
 
