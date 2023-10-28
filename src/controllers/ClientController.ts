@@ -57,15 +57,20 @@ class ClientController {
     }
     
     async handleGetClientData(request: Request, response: Response) {
-        let { requestId } = request.query;
-        const id = parseInt(requestId.toString());
-
-        const cliente = await this.clientService.getData(id);
-
+        let { id } = request.query;
+        const clientId = parseInt(id.toString());
+    
+        if (isNaN(clientId)) {
+            return response.status(400).json({ error: 'Invalid ID' });
+        }
+    
+        const cliente = await this.clientService.getData(clientId);
+    
         return response.render("clients/edit", {
             cliente: cliente
         });
     }
+    
     async handleListClients(request: Request, response: Response) {
 
         const clients = await this.clientService.list();

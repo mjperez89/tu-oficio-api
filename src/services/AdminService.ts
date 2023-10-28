@@ -20,20 +20,21 @@ interface IAdminCreate {
 
 class AdminService {  
 
+adminRepository = AppDataSource.getRepository(Admin)
+
 async create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IAdminCreate) {
     if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
         throw new Error("Por favor complete todos los datos.");
     }
 
-    const adminRepository = AppDataSource.getRepository(Admin)
 
-    const adminAlreadyExists = await adminRepository.findOne({where:{dni:dni}});
+    const adminAlreadyExists = await this.adminRepository.findOne({where:{dni:dni}});
 
     if (adminAlreadyExists) {
         throw new Error("Admin ya existe.");
     }
 
-    const emailAlreadyExists = await adminRepository.findOne({where:{email:email}});
+    const emailAlreadyExists = await this.adminRepository.findOne({where:{email:email}});
 
     if (emailAlreadyExists) {
         throw new Error("Email ya existe.");
@@ -41,7 +42,7 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
     
     const adm = new Admin(firstName,lastName,age,phoneNumber,email,address,birthDate,dni,userName,RolesEnum.ADMIN)
     
-    await adminRepository.save(adm);
+    await this.adminRepository.save(adm);
 
     
     return adm;
@@ -49,9 +50,8 @@ async create({firstName, lastName, age, phoneNumber, email, address, birthDate, 
 
 
 async delete(id: number) {
-    const adminRepository = AppDataSource.getRepository(Admin)
 
-    const admin = await adminRepository
+    const admin = await this.adminRepository
     .createQueryBuilder()
     .delete()
     .from(Admin)
@@ -63,18 +63,16 @@ async delete(id: number) {
 
 async getData(id: number) {
 
-    const adminRepository = AppDataSource.getRepository(Admin)
 
-    const admin = await adminRepository.findOne({where:{id:id}});
+    const admin = await this.adminRepository.findOne({where:{id:id}});
 
     return admin;
 
 }
 
 async list() {
-    const adminRepository = AppDataSource.getRepository(Admin)
 
-    const admins = await adminRepository.find();
+    const admins = await this.adminRepository.find();
 
     return admins;
 
@@ -85,9 +83,8 @@ async search(search: string) {
         throw new Error("Por favor rellene todos los campos");
     }
 
-const adminRepository = AppDataSource.getRepository(Admin)
 
-const admin = await adminRepository
+const admin = await this.adminRepository
     .createQueryBuilder()
     .where("firstName like :search", { search: `%${search}%` })
     .orWhere("lastName like :search", { search: `%${search}%` })
@@ -103,8 +100,7 @@ const admin = await adminRepository
 
 async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IAdminCreate) {
     
-    const adminRepository = AppDataSource.getRepository(Admin)
-    const admin = await adminRepository
+    const admin = await this.adminRepository
     .createQueryBuilder()
     .update(Admin)
     .set({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName})

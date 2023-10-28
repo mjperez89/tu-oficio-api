@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AdminService } from "../services/AdminService";
+import { error } from "console";
 
 class AdminController {
     //instanciamos adminService global para todos los métodos
@@ -56,15 +57,22 @@ class AdminController {
     }
     
     async handleGetAdminData(request: Request, response: Response) {
-        let { requestId } = request.query;
-        const id = parseInt(requestId.toString());
+        try{
+            const requestId = request.query.id.toString();
+            console.log(requestId);
+            const id = parseInt(requestId,10);
+    
+    
+            const admin = await this.adminService.getData(id);
 
-        const admin = await this.adminService.getData(id);
+            response.status(200).json(admin)
+    
+        }
+        catch(error){
+            response.status(400).send(error)
+        }
+        }
 
-        return response.render("admins/edit", {
-            admin: admin
-        });
-    }
     async handleListAdmins(request: Request, response: Response) {
 
         const admins = await this.adminService.list();
