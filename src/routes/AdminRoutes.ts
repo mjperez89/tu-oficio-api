@@ -10,6 +10,6 @@ adminRoutes.post("/add-admin", adminController.handleCreateAdmin);
 adminRoutes.get("/searchAdmin", auth.isLoggedIn, adminController.handleSearchAdmin);
 adminRoutes.post("/edit-admin", auth.isLoggedIn, adminController.handleUpdateAdmin);
 adminRoutes.get("/editAdmin", adminController.handleGetAdminData);
-adminRoutes.post("/delete-admin", auth.isLoggedIn, adminController.handleDeleteAdmin);
+adminRoutes.post("/delete-admin", adminController.handleDeleteAdmin);
 
 export { adminRoutes };

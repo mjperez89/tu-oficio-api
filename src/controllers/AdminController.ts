@@ -43,17 +43,26 @@ class AdminController {
     }
     
     async handleDeleteAdmin(request: Request, response: Response) {
-        const { id } = request.body;
+        const requestId = request.query.id.toString();
+        const id = parseInt(requestId,10);
 
-        try {
-            await this.adminService.delete(id).then(() => {
-                response.redirect("/admins")
-            });
+        try{
+            await this.adminService.delete(id)
+            response.status(200).send("Admin con id: " +id+" eliminado")
 
-        } catch (err) {
-            response.redirect("/admins");
-
+        }catch (error){
+            response.status(400).send(""+error)
         }
+
+        // try {
+        //     await this.adminService.delete(id).then(() => {
+        //         response.redirect("/admins")
+        //     });
+
+        // } catch (err) {
+        //     response.redirect("/admins");
+
+        // }
     }
     
     async handleGetAdminData(request: Request, response: Response) {
