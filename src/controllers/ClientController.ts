@@ -44,11 +44,12 @@ class ClientController {
 
     async handleDeleteClient(request: Request, response: Response) {
         const { id } = request.body;
+        const requestId = request.query.id.toString();
 
         try {
-            await this.clientService.delete(id).then(() => {
-                response.redirect("/clients")
-            });
+            await this.clientService.delete(id)
+                response.status(200).send("Cliente con id;" + id + " eliminado");
+
 
         } catch (err) {
             console.log("error delete client "+ err)
