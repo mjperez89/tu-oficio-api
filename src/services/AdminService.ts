@@ -3,6 +3,7 @@ import { AdminRepository } from "../repositories/AdminRepository";
 import { Admin } from "../entities/Admin";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
+import { error } from "console";
 
 interface IAdminCreate {
     id?: number;
@@ -110,8 +111,10 @@ async update({id, firstName, lastName, age, phoneNumber, email, address, birthDa
     .set({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName})
     .where("id = :id", { id })
     .execute();
+    if (admin.affected === 0 ){
+        throw new Error ("No se encontro admin")
+    }
 
-    return admin;
 }
 
 }
