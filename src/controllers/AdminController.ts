@@ -100,8 +100,12 @@ class AdminController {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
 
 
+        const requestId = request.query.id.toString();
+        console.log(requestId);
+        const id = parseInt(requestId,10);
         try {
-            await this.adminService.update({
+            const admin= await this.adminService.update({
+                id,
                 firstName,
                 lastName,
                 age,
@@ -111,12 +115,10 @@ class AdminController {
                 birthDate,
                 dni,
                 userName
-            }).then(() => {
-                response.redirect("/admins")
-
             });
+            response.status(200).send( "Admin con id "+ id.toString() + " actualizado con exito")
         } catch (err) {
-            response.redirect("/admins");
+            response.status(400).send(err.toString());
         }
 
     }
