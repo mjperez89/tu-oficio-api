@@ -58,6 +58,10 @@ async delete(id: number) {
     .where("id = :id", { id })
     .execute();
 
+    if(admin.affected === 0){
+        throw new Error(`No se encontró ningún registro con el ID ${id}`);
+    }
+    console.log(admin)
     return admin;
 }
 

@@ -51,18 +51,8 @@ class AdminController {
             response.status(200).send("Admin con id: " +id+" eliminado")
 
         }catch (error){
-            response.status(400).send(""+error)
+            response.status(400).send(error.toString())
         }
-
-        // try {
-        //     await this.adminService.delete(id).then(() => {
-        //         response.redirect("/admins")
-        //     });
-
-        // } catch (err) {
-        //     response.redirect("/admins");
-
-        // }
     }
     
     async handleGetAdminData(request: Request, response: Response) {
@@ -102,7 +92,6 @@ class AdminController {
             });
         } catch (err) {
             response.redirect("/admins");
-
         }
     }
     async handleUpdateAdmin(request: Request, response: Response) {
