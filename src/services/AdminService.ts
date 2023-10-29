@@ -83,23 +83,33 @@ async list() {
 
 }
 
-async search(search: string) {
-    if (!search) {
-        throw new Error("Por favor rellene todos los campos");
+async search(searchParams: {
+    firstName?: string,
+    lastName?: string,
+    age?: number,
+    dni?: number,
+    email?: string,
+    userName?: string,
+    phoneNumber?: string,
+    address?: string
+    }) {
+    if (!Object.values(searchParams).some(param => param !== undefined)) {
+        throw new Error("Por favor rellene al menos un campo de búsqueda");
     }
 
+    const admin = await this.adminRepository
+        .createQueryBuilder()
+        .where("firstName like :firstName", { firstName: `%${searchParams.firstName}%` })
+        .orWhere("lastName like :lastName", { lastName: `%${searchParams.lastName}%` })
+        .orWhere("dni like :dni", { dni: `%${searchParams.dni}%` })
+        .orWhere("age like :age", { age: `%${searchParams.age}%` })
+        .orWhere("email like :email", { email: `%${searchParams.email}%` })
+        .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
+        .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
+        .orWhere("address like :address", { address: `%${searchParams.address}%` })
+        .getMany();
 
-const admin = await this.adminRepository
-    .createQueryBuilder()
-    .where("firstName like :search", { search: `%${search}%` })
-    .orWhere("lastName like :search", { search: `%${search}%` })
-    .orWhere("dni like :search", { search: `%${search}%` })
-    .orWhere("email like :search", { search: `%${search}%` })
-    .orWhere("userName like :search", { search: `%${search}%` })
-    .orWhere("phoneNumber like :search", { search: `%${search}%` })
-    .orWhere("address like :search", { search: `%${search}%` })
-    .getMany();
-
+    console.log("admin: " + admin);
     return admin;
 }
 

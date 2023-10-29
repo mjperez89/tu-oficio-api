@@ -74,24 +74,32 @@ class AdminController {
 
     async handleListAdmins(request: Request, response: Response) {
 
-        const admins = await this.adminService.list();
+        try{
+            const admins = await this.adminService.list();
 
-        return response.render("admin/index", {
-            admins: admins
-        });
+            response.status(200).json(admins)
+        }catch(error){
+            response.status(404).send(error.toString())
+        }
     }
     async handleSearchAdmin(request: Request, response: Response) {
-        let { search } = request.query;
-        search = search.toString();
+        const { firstName, lastName,age, dni, email, userName, phoneNumber, address } = request.query;
+        const searchParams = {
+            firstName: String(firstName),
+            lastName: String(lastName),
+            age: Number(age),
+            dni: Number(dni),
+            email: String(email),
+            userName: String(userName),
+            phoneNumber: String(phoneNumber),
+            address: String(address)
+        };
 
         try {
-            const admins = await this.adminService.search(search);
-            response.render("admin/search", {
-                admins: admins,
-                search: search
-            });
-        } catch (err) {
-            response.redirect("/admins");
+            const admins = await this.adminService.search(searchParams);
+            response.status(200).json(admins)
+        } catch (error) {
+            response.status(400).send(error.toString())
         }
     }
     async handleUpdateAdmin(request: Request, response: Response) {
