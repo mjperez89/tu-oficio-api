@@ -3,6 +3,7 @@ import { ClientRepository } from "../repositories/ClientRepository";
 import { Client } from "../entities/Client";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
+import { error } from "console";
 
 interface IClientCreate {
     id?: number;
@@ -18,101 +19,112 @@ interface IClientCreate {
 
 }
 
-class ClientService {  
+class ClientService {
 
-async create({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IClientCreate) {
-    if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
-        throw new Error("Por favor complete todos los datos.");
+    clientRepository = AppDataSource.getRepository(Client)
+
+    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IClientCreate) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
+            throw new Error("Por favor complete todos los datos.");
+        }
+
+        const clientAlreadyExists = await this.clientRepository.findOne({ where: { dni: dni } });
+
+        if (clientAlreadyExists) {
+            throw new Error("Cliente ya existe.");
+        }
+
+        const emailAlreadyExists = await this.clientRepository.findOne({ where: { email: email } });
+
+        if (emailAlreadyExists) {
+            throw new Error("Email ya existe.");
+        }
+
+        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, RolesEnum.CLIENT)
+
+        await this.clientRepository.save(client);
+
+        return client;
     }
 
-    const clientRepository = AppDataSource.getRepository(Client)
 
-    const clientAlreadyExists = await clientRepository.findOne({where:{dni:dni}});
+    async delete(id: number) {
 
-    if (clientAlreadyExists) {
-        throw new Error("Cliente ya existe.");
+        const client = await this.clientRepository
+            .createQueryBuilder()
+            .delete()
+            .from(Client)
+            .where("id = :id", { id })
+            .execute();
+
+        if (client.affected === 0) {
+            throw new Error(`No se encontró ningún registro con el ID ${id}`);
+        }
+        console.log(client);
+
+        return client;
     }
 
-    const emailAlreadyExists = await clientRepository.findOne({where:{email:email}});
+    async getData(id: number) {
 
-    if (emailAlreadyExists) {
-        throw new Error("Email ya existe.");
+        const client = await this.clientRepository.findOne({ where: { id: id } });
+
+        return client;
+
     }
 
-    const client = new Client(firstName,lastName,age,phoneNumber,email,address,birthDate,dni,userName,RolesEnum.CLIENT)
-    
-    await clientRepository.save(client);
-    
-    return client;
-}
+    async list() {
 
+        const clients = await this.clientRepository.find();
 
-async delete(id: number) {
-    const clientRepository = AppDataSource.getRepository(Client);
+        return clients;
 
-    const client = await clientRepository
-    .createQueryBuilder()
-    .delete()
-    .from(Client)
-    .where("id = :id", { id })
-    .execute();
-
-    return client;
-}
-
-async getData(id: number) {
-
-    const clientRepository = AppDataSource.getRepository(Client);
-
-    const client = await clientRepository.findOne({where:{id:id}});
-
-    return client;
-
-}
-
-async list() {
-    const clientRepository = AppDataSource.getRepository(Client);
-
-    const clients = await clientRepository.find();
-
-    return clients;
-
-}
-
-async search(search: string) {
-    if (!search) {
-        throw new Error("Por favor rellene todos los campos");
     }
 
-const clientRepository = AppDataSource.getRepository(Client);
+    async search(searchParams: {
+        firstName?: string,
+        lastName?: string,
+        age?: number,
+        dni?: number,
+        email?: string,
+        userName?: string,
+        phoneNumber?: string,
+        address?: string
+    }) {
+        if (!Object.values(searchParams).some(param => param !== undefined)) {
+            throw new Error("Por favor rellene al menos un campo de búsqueda");
+        }
 
-const client = await clientRepository
-    .createQueryBuilder()
-    .where("firstName like :search", { search: `%${search}%` })
-    .orWhere("lastName like :search", { search: `%${search}%` })
-    .orWhere("dni like :search", { search: `%${search}%` })
-    .orWhere("email like :search", { search: `%${search}%` })
-    .orWhere("userName like :search", { search: `%${search}%` })
-    .orWhere("phoneNumber like :search", { search: `%${search}%` })
-    .orWhere("address like :search", { search: `%${search}%` })
-    .getMany();
 
-    return client;
-}
+        const client = await this.clientRepository
+            .createQueryBuilder()
+            .where("firstName like :firstName", { firstName: `%${searchParams.firstName}%` })
+            .orWhere("lastName like :lastName", { lastName: `%${searchParams.lastName}%` })
+            .orWhere("dni like :dni", { dni: `%${searchParams.dni}%` })
+            .orWhere("age like :age", { age: `%${searchParams.age}%` })
+            .orWhere("email like :email", { email: `%${searchParams.email}%` })
+            .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
+            .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
+            .orWhere("address like :address", { address: `%${searchParams.address}%` })
+            .getMany();
 
-async update({id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName}: IClientCreate) {
-    
-    const clientRepository = AppDataSource.getRepository(Client);
+        console.log("cliente" + client);
+        return client;
+    }
 
-    const client = await clientRepository
-    .createQueryBuilder()
-    .update(Client)
-    .set({firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName})
-    .where("id = :id", { id })
-    .execute();
+    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IClientCreate) {
 
-    return client;
-}
+        const client = await this.clientRepository
+            .createQueryBuilder()
+            .update(Client)
+            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName })
+            .where("id = :id", { id })
+            .execute();
+        if (client.affected === 0) {
+            throw new Error("No se encontro cliente")
+        }
+
+    }
 
 }
 

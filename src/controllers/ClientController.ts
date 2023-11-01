@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ClientService } from "../services/ClientService";
+import { error } from "console";
 
 class ClientController {
     //instanciamos clientService global para todos los métodos
@@ -30,12 +31,11 @@ class ClientController {
                 dni,
                 userName
 
-            }).then(() => {
-                response.status(200).json(client)
             });
+            response.status(200).json(client)
 
         } catch (err) {
-            console.log("error creando client "+ err)
+            console.log("error cldo " + err)
             response.status(400).send("" + err)
 
         }
@@ -43,64 +43,74 @@ class ClientController {
     }
 
     async handleDeleteClient(request: Request, response: Response) {
-        const { id } = request.body;
+        const requestId = request.query.id.toString();
+        const id = parseInt(requestId, 10);
 
         try {
-            await this.clientService.delete(id).then(() => {
-                response.redirect("/clients")
-            });
+            await this.clientService.delete(id)
+            response.status(200).send("Cliente con id: " + id + " eliminado")
 
         } catch (err) {
-            console.log("error delete client "+ err)
-            response.status(400).send("" + err)
+            response.status(400).send(error.toString())
         }
     }
-    
+
     async handleGetClientData(request: Request, response: Response) {
-        let { id } = request.query;
-        const clientId = parseInt(id.toString());
-    
-        if (isNaN(clientId)) {
-            return response.status(400).json({ error: 'Invalid ID' });
+        try {
+            const requestId = request.query.id.toString();
+            console.log(requestId);
+            const id = parseInt(requestId, 10);
+
+
+            const admin = await this.clientService.getData(id);
+
+            response.status(200).json(admin)
+
         }
-    
-        const cliente = await this.clientService.getData(clientId);
-    
-        return response.render("clients/edit", {
-            cliente: cliente
-        });
+        catch (error) {
+            response.status(400).send(error)
+        }
     }
-    
+
     async handleListClients(request: Request, response: Response) {
 
-        const clients = await this.clientService.list();
+        try {
+            const admins = await this.clientService.list();
 
-        return response.render("clients/index", {
-            clients: clients
-        });
+            response.status(200).json(admins)
+        } catch (error) {
+            response.status(404).send(error.toString())
+        }
     }
     async handleSearchClient(request: Request, response: Response) {
-        let { search } = request.query;
-        search = search.toString();
+        const { firstName, lastName, age, dni, email, userName, phoneNumber, address } = request.query;
+        const searchParams = {
+            firstName: String(firstName),
+            lastName: String(lastName),
+            age: Number(age),
+            dni: Number(dni),
+            email: String(email),
+            userName: String(userName),
+            phoneNumber: String(phoneNumber),
+            address: String(address)
+        };
 
         try {
-            const clients = await this.clientService.search(search);
-            response.render("clients/search", {
-                clients: clients,
-                search: search
-            });
-        } catch (err) {
-            console.log("error search client"+ err)
-            response.status(400).send("" + err)
-
+            const clients = await this.clientService.search(searchParams);
+            response.status(200).json(clients)
+        } catch (error) {
+            response.status(400).send(error.toString())
         }
     }
     async handleUpdateClient(request: Request, response: Response) {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
 
-
+        const requestId = request.query.id.toString();
+        console.log(requestId);
+        const id = parseInt(requestId, 10);
         try {
-            const client = await this.clientService.update({
+            const admin = await this.clientService.update({
+                id,
                 firstName,
                 lastName,
                 age,
@@ -110,12 +120,10 @@ class ClientController {
                 birthDate,
                 dni,
                 userName
-            }).then(() => {
-                response.status(200).json(client)
             });
+            response.status(200).send("Cliente con id " + id.toString() + " actualizado con exito")
         } catch (err) {
-            console.log("error update client "+ err)
-            response.status(400).send("" + err)
+            response.status(400).send(err.toString());
         }
 
     }

@@ -20,7 +20,7 @@ class AdminController {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
 
         try {
-            const admin=await this.adminService.create({
+            const admin = await this.adminService.create({
                 firstName,
                 lastName,
                 age,
@@ -35,55 +35,55 @@ class AdminController {
             response.status(200).json(admin)
 
         } catch (err) {
-            console.log("error cldo "+ err)
+            console.log("error cldo " + err)
             response.status(400).send("" + err)
 
         }
 
     }
-    
+
     async handleDeleteAdmin(request: Request, response: Response) {
         const requestId = request.query.id.toString();
-        const id = parseInt(requestId,10);
+        const id = parseInt(requestId, 10);
 
-        try{
+        try {
             await this.adminService.delete(id)
-            response.status(200).send("Admin con id: " +id+" eliminado")
+            response.status(200).send("Admin con id: " + id + " eliminado")
 
-        }catch (error){
+        } catch (error) {
             response.status(400).send(error.toString())
         }
     }
-    
+
     async handleGetAdminData(request: Request, response: Response) {
-        try{
+        try {
             const requestId = request.query.id.toString();
             console.log(requestId);
-            const id = parseInt(requestId,10);
-    
-    
+            const id = parseInt(requestId, 10);
+
+
             const admin = await this.adminService.getData(id);
 
             response.status(200).json(admin)
-    
+
         }
-        catch(error){
+        catch (error) {
             response.status(400).send(error)
         }
-        }
+    }
 
     async handleListAdmins(request: Request, response: Response) {
 
-        try{
+        try {
             const admins = await this.adminService.list();
 
             response.status(200).json(admins)
-        }catch(error){
+        } catch (error) {
             response.status(404).send(error.toString())
         }
     }
     async handleSearchAdmin(request: Request, response: Response) {
-        const { firstName, lastName,age, dni, email, userName, phoneNumber, address } = request.query;
+        const { firstName, lastName, age, dni, email, userName, phoneNumber, address } = request.query;
         const searchParams = {
             firstName: String(firstName),
             lastName: String(lastName),
@@ -108,9 +108,9 @@ class AdminController {
 
         const requestId = request.query.id.toString();
         console.log(requestId);
-        const id = parseInt(requestId,10);
+        const id = parseInt(requestId, 10);
         try {
-            const admin= await this.adminService.update({
+            const admin = await this.adminService.update({
                 id,
                 firstName,
                 lastName,
@@ -122,7 +122,7 @@ class AdminController {
                 dni,
                 userName
             });
-            response.status(200).send( "Admin con id "+ id.toString() + " actualizado con exito")
+            response.status(200).send("Admin con id " + id.toString() + " actualizado con exito")
         } catch (err) {
             response.status(400).send(err.toString());
         }
