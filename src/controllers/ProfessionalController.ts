@@ -38,64 +38,98 @@ class ProfessionalController {
             });
 
         } catch (err) {
-            console.log("error creando prof "+ err)
+            console.log("error creando prof " + err)
             response.status(400).send("" + err)
         }
 
     }
 
     async handleDeleteProfessional(request: Request, response: Response) {
-        const { id } = request.body;
+        const requestId = request.query.id.toString();
+        const id = parseInt(requestId, 10);
 
         try {
-            await this.professionalService.delete(id).then(() => {
-                response.redirect("/professionals")
-            });
+            await this.professionalService.delete(id)
+            response.status(200).send("Profesional con id: " + id + " eliminado")
 
         } catch (err) {
-            console.log("error delete prof "+ err)
-            response.status(400).send("" + err)
+            console.log("error delete prof " + err);
+            response.status(400).send(err.toString());
         }
     }
 
     async handleGetProfessionalData(request: Request, response: Response) {
-        let { requestId } = request.query;
-        const id = parseInt(requestId.toString());
+        try {
+            const requestId = request.query.id.toString();
+            console.log(requestId);
+            const id = parseInt(requestId, 10);
 
-        const profesional = await this.professionalService.getData(id);
+            const professional = await this.professionalService.getData(id);
 
-        return response.render("professionals/edit", {
-            profesional: profesional
-        });
+            response.status(200).json(professional)
+        }
+        catch (error) {
+            response.status(400).send(error)
+        }
     }
+
     async handleListProfessionals(request: Request, response: Response) {
+        try {
+            const professionals = await this.professionalService.list();
 
-        const professionals = await this.professionalService.list();
-
-        return response.render("professionals/index", {
-            professionals: professionals
-        });
+            response.status(200).json(professionals)
+        } catch (error) {
+            response.status(404).send(error.toString())
+        }
     }
+
     async handleSearchProfessional(request: Request, response: Response) {
-        let { search } = request.query;
-        search = search.toString();
+        const {
+            firstName,
+            lastName,
+            age,
+            phoneNumber,
+            email,
+            address,
+            birthDate,
+            dni,
+            userName,
+            registrationNumber,
+            specialty,
+            yearsOfExperience
+        } = request.query;
+
+        const searchParams = {
+            firstName: String(firstName),
+            lastName: String(lastName),
+            age: Number(age),
+            phoneNumber: String(phoneNumber),
+            email: String(email),
+            address: String(address),
+            dni: Number(dni),
+            userName: String(userName),
+            registrationNumber: Number(registrationNumber),
+            specialty: String(specialty),
+            yearsOfExperience: String(yearsOfExperience)
+        };
 
         try {
-            const professionals = await this.professionalService.search(search);
-            response.render("professionals/search", {
-                professionals: professionals,
-                search: search
-            });
-        } catch (err) {
-            console.log("error search prof"+ err)
-            response.status(400).send("" + err)
+            const professionals = await this.professionalService.search(searchParams);
+            response.status(200).json(professionals)
+        } catch (error) {
+            response.status(400).send(error.toString())
         }
     }
     async handleUpdateProfessional(request: Request, response: Response) {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, registrationNumber, specialty, yearsOfExperience } = request.body;
 
+        const requestId = request.query.id.toString();
+        console.log(requestId);
+        const id = parseInt(requestId, 10);
+
         try {
             const professional = await this.professionalService.update({
+                id,
                 firstName,
                 lastName,
                 age,
@@ -108,12 +142,11 @@ class ProfessionalController {
                 registrationNumber,
                 specialty,
                 yearsOfExperience
-            }).then(() => {
-                response.status(200).json(professional)
             });
+            response.status(200).send("Profesional con id " + id.toString() + " actualizado con éxito");
         } catch (err) {
-            console.log("error update prof "+ err)
-            response.status(400).send("" + err)
+            console.log("error update prof " + err)
+            response.status(400).send(err.toString());
         }
 
     }
