@@ -1,0 +1,186 @@
+{
+	"info": {
+		"_postman_id": "911812bb-c0d1-4ff2-99f9-1ca93f3e5e52",
+		"name": "Tu Oficio",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30811313"
+	},
+	"item": [
+		{
+			"name": "GET ADMIN",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/editAdmin/?id=1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"editAdmin",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE ADMIN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Paz\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/add-admin",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"add-admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE ADMIN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/delete-admin?id=55",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"delete-admin"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "55"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LIST ADMINS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/list-admins",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"list-admins"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SEARCH ADMIN",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/searchAdmin?userName=emi123",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"searchAdmin"
+					],
+					"query": [
+						{
+							"key": "age",
+							"value": "29",
+							"disabled": true
+						},
+						{
+							"key": "dni",
+							"value": "1515552222",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "Emiliano",
+							"disabled": true
+						},
+						{
+							"key": "phoneNumber",
+							"value": "262666222",
+							"disabled": true
+						},
+						{
+							"key": "birthDate",
+							"value": "1993-12-10T00:00:00.000Z",
+							"disabled": true
+						},
+						{
+							"key": "userName",
+							"value": "emi123"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE ADMIN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"PEPE\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/edit-admin?id=6",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"edit-admin"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
