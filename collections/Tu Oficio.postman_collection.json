@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "911812bb-c0d1-4ff2-99f9-1ca93f3e5e52",
+		"_postman_id": "1225be79-63e2-4f6b-ab67-6cb501de3d08",
 		"name": "Tu Oficio",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30811313"
+		"_exporter_id": "23965347"
 	},
 	"item": [
 		{
@@ -19,6 +19,31 @@
 					"port": "3000",
 					"path": [
 						"editAdmin",
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET CLIENT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/editClient/?id=1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"editClient",
 						""
 					],
 					"query": [
@@ -59,6 +84,33 @@
 			"response": []
 		},
 		{
+			"name": "CREATE CLIENT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Paz\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/add-client",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"add-client"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "DELETE ADMIN",
 			"request": {
 				"method": "POST",
@@ -76,6 +128,30 @@
 						{
 							"key": "id",
 							"value": "55"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE CLIENT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/delete-client?id=1",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"delete-client"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
 						}
 					]
 				}
@@ -101,6 +177,24 @@
 			"response": []
 		},
 		{
+			"name": "LIST CLIENT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/list-client",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"list-client"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "SEARCH ADMIN",
 			"request": {
 				"method": "GET",
@@ -113,6 +207,55 @@
 					"port": "3000",
 					"path": [
 						"searchAdmin"
+					],
+					"query": [
+						{
+							"key": "age",
+							"value": "29",
+							"disabled": true
+						},
+						{
+							"key": "dni",
+							"value": "1515552222",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "Emiliano",
+							"disabled": true
+						},
+						{
+							"key": "phoneNumber",
+							"value": "262666222",
+							"disabled": true
+						},
+						{
+							"key": "birthDate",
+							"value": "1993-12-10T00:00:00.000Z",
+							"disabled": true
+						},
+						{
+							"key": "userName",
+							"value": "emi123"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SEARCH CLIENT",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/searchClient?userName=emi123",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"searchClient"
 					],
 					"query": [
 						{
@@ -176,6 +319,39 @@
 						{
 							"key": "id",
 							"value": "6"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE CLIENT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"PEPE\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/edit-client?id=2",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"edit-client"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2"
 						}
 					]
 				}
