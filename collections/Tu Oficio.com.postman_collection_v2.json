@@ -1,0 +1,553 @@
+{
+	"info": {
+		"_postman_id": "0ecf5445-fa23-47cd-b7e7-9dec7cf4ea25",
+		"name": "Tu Oficio.com",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25625200"
+	},
+	"item": [
+		{
+			"name": "Admins",
+			"item": [
+				{
+					"name": "GET ADMIN",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/editAdmin/?id=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"editAdmin",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE ADMIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Paz\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/add-admin",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"add-admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE ADMIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/delete-admin?id=55",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"delete-admin"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "55"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LIST ADMINS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/list-admins",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"list-admins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SEARCH ADMIN",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/searchAdmin?userName=emi123",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"searchAdmin"
+							],
+							"query": [
+								{
+									"key": "age",
+									"value": "29",
+									"disabled": true
+								},
+								{
+									"key": "dni",
+									"value": "1515552222",
+									"disabled": true
+								},
+								{
+									"key": "lastName",
+									"value": "Emiliano",
+									"disabled": true
+								},
+								{
+									"key": "phoneNumber",
+									"value": "262666222",
+									"disabled": true
+								},
+								{
+									"key": "birthDate",
+									"value": "1993-12-10T00:00:00.000Z",
+									"disabled": true
+								},
+								{
+									"key": "userName",
+									"value": "emi123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE ADMIN",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"PEPE\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/edit-admin?id=6",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"edit-admin"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "GET CLIENT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/editClient/?id=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"editClient",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE CLIENT",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Paz\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/add-client",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"add-client"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE CLIENT",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/delete-client?id=1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"delete-client"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SEARCH CLIENT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/searchClient?userName=emi123",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"searchClient"
+							],
+							"query": [
+								{
+									"key": "age",
+									"value": "29",
+									"disabled": true
+								},
+								{
+									"key": "dni",
+									"value": "1515552222",
+									"disabled": true
+								},
+								{
+									"key": "lastName",
+									"value": "Emiliano",
+									"disabled": true
+								},
+								{
+									"key": "phoneNumber",
+									"value": "262666222",
+									"disabled": true
+								},
+								{
+									"key": "birthDate",
+									"value": "1993-12-10T00:00:00.000Z",
+									"disabled": true
+								},
+								{
+									"key": "userName",
+									"value": "emi123"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LIST CLIENT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/list-client",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"list-client"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE CLIENT",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"PEPE\",\r\n  \"lastName\": \"Emiliano\",\r\n  \"age\": 29,\r\n  \"phoneNumber\": 262666222,\r\n  \"email\": \"emi1223222@gmail.com\",\r\n  \"address\": \"20 de junio 111, maipu\",\r\n  \"birthDate\": \"1993-12-10T00:00:00.000Z\",\r\n  \"dni\": 1515552232,\r\n  \"userName\": \"emi123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/edit-client?id=2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"edit-client"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Professionals",
+			"item": [
+				{
+					"name": "GET PROFESSIONAL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/editProfessional/?id=3",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"editProfessional",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CREATE PROFESSIONAL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Jean\",\r\n    \"lastName\": \"Reno\",\r\n    \"age\": 51,\r\n    \"phoneNumber\": 261261261,\r\n    \"email\": \"jean2@reno.com\",\r\n    \"address\": \"Ozamis 456, Maipu\",\r\n    \"birthDate\": \"1956-03-13T00:00:00.000Z\", // Replace with the actual date\r\n    \"dni\": 11223346,\r\n    \"userName\": \"jean.reno\",\r\n    \"registrationNumber\": 332,\r\n    \"specialty\": \"asesino\",\r\n    \"yearsOfExperience\": 40\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/add-professional",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"add-professional"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE PROFESSIONAL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/delete-professional?id=5",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"delete-professional"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LIST PROFESSIONALS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/list-professionals",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"list-professionals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SEARCH PROFESSIONAL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/searchProfessional?lastName=Reno",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"searchProfessional"
+							],
+							"query": [
+								{
+									"key": "age",
+									"value": "29",
+									"disabled": true
+								},
+								{
+									"key": "dni",
+									"value": "1515552222",
+									"disabled": true
+								},
+								{
+									"key": "lastName",
+									"value": "Reno"
+								},
+								{
+									"key": "phoneNumber",
+									"value": "262666222",
+									"disabled": true
+								},
+								{
+									"key": "birthDate",
+									"value": "1993-12-10T00:00:00.000Z",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "3",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE PROFESSIONAL",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"firstName\": \"Juan Ramon\",\r\n        \"lastName\": \"Valdez\",\r\n        \"age\": 62,\r\n        \"phoneNumber\": \"261637976\",\r\n        \"email\": \"juanra@gmail.com\",\r\n        \"address\": \"Godoy Cruz, Mendoza\",\r\n        \"birthDate\": \"1981-03-16T03:00:00.000Z\",\r\n        \"dni\": 28628888,\r\n        \"userName\": \"juanvaldez\",\r\n        \"role\": \"Professional\",\r\n        \"registrationNumber\": 57676,\r\n        \"specialty\": \"plomero\",\r\n        \"yearsOfExperience\": 19\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/edit-professional?id=2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"edit-professional"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

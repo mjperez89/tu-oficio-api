@@ -51,8 +51,6 @@ class ProfessionalService {
 
 
     async delete(id: number) {
-        // const professionalRepository = getCustomRepository(ProfessionalRepository);
-
         const professional = await this.professionalRepository
             .createQueryBuilder()
             .delete()
@@ -60,13 +58,14 @@ class ProfessionalService {
             .where("id = :id", { id })
             .execute();
 
+        if (professional.affected === 0) {
+            throw new Error(`No se encontró ningún registro con el ID ${id}`);
+        }
+        console.log(professional)
         return professional;
     }
 
     async getData(id: number) {
-
-        // const professionalRepository = getCustomRepository(ProfessionalRepository);
-
         const professional = await this.professionalRepository.findOne({ where: { id: id } });
 
         return professional;
@@ -74,30 +73,39 @@ class ProfessionalService {
     }
 
     async list() {
-        // const professionalRepository = getCustomRepository(ProfessionalRepository);
+        const professionals = await this.professionalRepository.find();
 
-        const clients = await this.professionalRepository.find();
-
-        return clients;
+        return professionals;
 
     }
 
-    async search(search: string) {
-        if (!search) {
-            throw new Error("Por favor rellene todos los campos");
+    async search(searchParams: {
+        firstName?: String,
+        lastName?: String,
+        age?: Number,
+        phoneNumber?: String,
+        email?: String,
+        address?: String,
+        birthDate?: Date,
+        dni?: Number,
+        userName?: String,
+        registrationNumber?: Number,
+        specialty?: String,
+        yearsOfExperience?: String
+    }) {
+        if (!Object.values(searchParams).some(param => param !== undefined)) {
+            throw new Error("Por favor rellene al menos un campo de búsqueda");
         }
-
-        // const professionalRepository = getCustomRepository(ProfessionalRepository);
 
         const professional = await this.professionalRepository
             .createQueryBuilder()
-            .where("firstName like :search", { search: `%${search}%` })
-            .orWhere("lastName like :search", { search: `%${search}%` })
-            .orWhere("dni like :search", { search: `%${search}%` })
-            .orWhere("email like :search", { search: `%${search}%` })
-            .orWhere("userName like :search", { search: `%${search}%` })
-            .orWhere("phoneNumber like :search", { search: `%${search}%` })
-            .orWhere("address like :search", { search: `%${search}%` })
+            .where("firstName like :firstName", { firstName: `%${searchParams.firstName}%` })
+            .orWhere("lastName like :lastName", { lastName: `%${searchParams.lastName}%` })
+            .orWhere("dni like :dni", { dni: `%${searchParams.dni}%` })
+            .orWhere("email like :email", { email: `%${searchParams.email}%` })
+            .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
+            .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
+            .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
 
         return professional;
@@ -106,7 +114,6 @@ class ProfessionalService {
     async update({
         id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName,
         registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
-        // const professionalRepository = getCustomRepository(ProfessionalRepository);
 
         const professional = await this.professionalRepository
             .createQueryBuilder()
@@ -118,7 +125,9 @@ class ProfessionalService {
             .where("id = :id", { id })
             .execute();
 
-        return professional;
+        if (professional.affected === 0) {
+            throw new Error("No se encontro admin")
+        }
     }
 
 }
