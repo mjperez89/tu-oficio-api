@@ -7,9 +7,12 @@ import { RolesEnum } from "./entities/RolesEnum"
 import { adminRoutes } from "./routes/AdminRoutes"
 import { professionalRoutes } from "./routes/ProfessionalRoutes";
 import { clientRoutes } from "./routes/ClientRoutes";
+import { MySQLDatabase } from "./database/mysql-database";
+import { connect } from "./database/typeorm";
 
 const app = express();
 const port = 3000;
+const db2 = connect();
 
 app.use(bodyParser.json());
 app.use(adminRoutes);
@@ -20,6 +23,16 @@ app.listen(port, () => {
   console.log(`Aplicación escuchando en el puerto ${port}`);
 });
 
+// const db = new MySQLDatabase(databaseConfig);
+
+// db2.connect()
+//   .then((connection) => {
+//     // Your application code that uses the database connection goes here
+//   })
+//   .catch((error) => {
+//     console.error("Failed to connect to the database:", error);
+//   });
+/*
 AppDataSource.initialize().then(async () => {
     /* console.log("Inserting a new admin into the database...")
     const admin = new Admin(
@@ -64,8 +77,9 @@ AppDataSource.initialize().then(async () => {
     const professionals = await AppDataSource.manager.find(Professional)
     console.log("Loaded professionals: ", professionals)
 
-    console.log("Here you can setup and run express / fastify / any other framework.") */
+    console.log("Here you can setup and run express / fastify / any other framework.")
 
 }).catch(error => console.log(error))
 
 export {AppDataSource}
+*/

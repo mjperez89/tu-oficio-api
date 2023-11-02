@@ -1,9 +1,10 @@
-import { getCustomRepository } from "typeorm";
+import { Connection, Repository, getCustomRepository } from "typeorm";
 import { AdminRepository } from "../repositories/AdminRepository";
 import { Admin } from "../entities/Admin";
-import { AppDataSource } from "../index"
+// import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
 import { error } from "console";
+import { MySQLDatabase } from "../database/mysql-database";
 
 interface IAdminCreate {
     id?: number;
@@ -20,8 +21,18 @@ interface IAdminCreate {
 }
 
 class AdminService {
+    private connection: Connection;
+    private adminRepository: Repository<Admin>;
+    // adminRepository = AppDataSource.getRepository(Admin)
 
-    adminRepository = AppDataSource.getRepository(Admin)
+    // constructor() {
+    //     // Create an instance of your database connection class (MySQLDatabase)
+    //     const db = new MySQLDatabase(databaseConfig);
+    //     this.connection = db.getConnection(); // Get the database connection
+    
+    //     // Get the repository for the Professional entity
+    //     this.adminRepository = this.connection.getRepository(Admin);
+    //   }
 
     async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IAdminCreate) {
         if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {

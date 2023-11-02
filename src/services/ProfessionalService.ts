@@ -1,6 +1,9 @@
 import { Professional } from "../entities/Professional";
 import { AppDataSource } from "../data-source";
 import { RolesEnum } from "../entities/RolesEnum";
+import { Connection, Repository } from "typeorm";
+import { MySQLDatabase } from "../database/mysql-database";
+// import { CustomDatabaseConfig, databaseConfig } from "../config/database-config";
 
 interface IProfessionalCreate {
     id?: number;
@@ -19,7 +22,18 @@ interface IProfessionalCreate {
 }
 
 class ProfessionalService {
-    professionalRepository = AppDataSource.getRepository(Professional);
+    private connection: Connection;
+    private professionalRepository: Repository<Professional>;
+    // professionalRepository = AppDataSource.getRepository(Professional);
+
+    // constructor(databaseConfig: CustomDatabaseConfig) {
+    //     // Create an instance of your database connection class (MySQLDatabase)
+    //     const db = new MySQLDatabase(databaseConfig);
+    //     this.connection = db.getConnection(); // Get the database connection
+
+    //     // Get the repository for the Professional entity
+    //     this.professionalRepository = this.connection.getRepository(Professional);
+    //   }
 
     async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
         if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !registrationNumber || !specialty || !yearsOfExperience) {
@@ -27,7 +41,7 @@ class ProfessionalService {
         }
 
         // const professionalRepository = AppDataSource.getRepository(Professional);
-
+        console.log(this.professionalRepository);
         const professionalAlreadyExists = await this.professionalRepository.findOne({ where: { dni: dni } });
 
         if (professionalAlreadyExists) {
@@ -73,6 +87,7 @@ class ProfessionalService {
     }
 
     async list() {
+        console.log(this.professionalRepository);
         const professionals = await this.professionalRepository.find();
 
         return professionals;

@@ -1,9 +1,10 @@
-import { getCustomRepository } from "typeorm";
+import { Connection, Repository, getCustomRepository } from "typeorm";
 import { ClientRepository } from "../repositories/ClientRepository";
 import { Client } from "../entities/Client";
-import { AppDataSource } from "../index"
+// import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
 import { error } from "console";
+import { MySQLDatabase } from "../database/mysql-database";
 
 interface IClientCreate {
     id?: number;
@@ -20,8 +21,18 @@ interface IClientCreate {
 }
 
 class ClientService {
+    private connection: Connection;
+    private clientRepository: Repository<Client>;
+    // clientRepository = AppDataSource.getRepository(Client)
 
-    clientRepository = AppDataSource.getRepository(Client)
+    // constructor() {
+    //     // Create an instance of your database connection class (MySQLDatabase)
+    //     const db = new MySQLDatabase(databaseConfig);
+    //     this.connection = db.getConnection(); // Get the database connection
+    
+    //     // Get the repository for the Professional entity
+    //     this.clientRepository = this.connection.getRepository(Client);
+    //   }
 
     async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IClientCreate) {
         if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
