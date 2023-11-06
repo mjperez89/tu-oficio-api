@@ -127,6 +127,19 @@ class AdminService {
 
     }
 
+    async getAdminLogin(email, reqPassword) {
+
+        const admin = await this.adminRepository.findOne({ where: { email: email } });
+
+        console.log(admin.firstName)
+        const password = admin.dni.toString()
+        if(reqPassword != password){
+            throw new Error("Constraseña incorrecta")
+        }
+        
+        return admin;
+    }
+
 }
 
 export { AdminService };

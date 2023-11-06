@@ -5,6 +5,9 @@ import auth from "../../lib/auth";
 const adminRoutes = Router();
 const adminController  = new AdminController();
 
+adminRoutes.post("/login", adminController.handleLoginAdmin);
+
+
 adminRoutes.get("/list-admins", adminController.handleListAdmins);
 adminRoutes.post("/add-admin", adminController.handleCreateAdmin);
 adminRoutes.get("/searchAdmin", adminController.handleSearchAdmin);

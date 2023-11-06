@@ -10,7 +10,16 @@ import { clientRoutes } from "./routes/ClientRoutes";
 
 const app = express();
 const port = 3000;
+const cors = require('cors');
 
+const corsOptions = {
+    origin: 'http://localhost:3001', // Reemplaza con la URL de tu aplicación React
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204,
+  };
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(adminRoutes);
 app.use(professionalRoutes);

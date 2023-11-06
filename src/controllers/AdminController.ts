@@ -8,6 +8,7 @@ class AdminController {
 
     constructor() {
         this.adminService = new AdminService();
+        this.handleLoginAdmin = this.handleLoginAdmin.bind(this);
         this.handleCreateAdmin = this.handleCreateAdmin.bind(this);
         this.handleDeleteAdmin = this.handleDeleteAdmin.bind(this);
         this.handleGetAdminData = this.handleGetAdminData.bind(this);
@@ -127,6 +128,22 @@ class AdminController {
             response.status(400).send(err.toString());
         }
 
+    }
+    
+    async handleLoginAdmin(request: Request, response: Response) {
+        console.log(request.body)
+        try {
+            const { email, password } = request.body;
+
+            const admin = await this.adminService.getAdminLogin(email,password);
+
+            response.status(200).json({ message: 'Inicio de sesión exitoso' })
+
+        }
+        catch (error) {
+            console.log(error)
+            response.status(401).json({ message: 'Credenciales incorrectas' });
+        }
     }
 }
 export { AdminController };
