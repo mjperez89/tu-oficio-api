@@ -132,7 +132,18 @@ class ProfessionalService {
             throw new Error("No se encontro admin")
         }
     }
+    async getProfessionalLogin(email, reqPassword) {
 
+        const professional = await this.professionalRepository.findOne({ where: { email: email } });
+
+        console.log(professional.firstName)
+        const password = professional.dni.toString()
+        if (reqPassword != password) {
+            throw new Error("Constraseña incorrecta")
+        }
+
+        return professional;
+    }
 }
 
 export { ProfessionalService };

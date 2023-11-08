@@ -105,7 +105,7 @@ class ClientService {
             .orWhere("age like :age", { age: `%${searchParams.age}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
-            .orWhere("password like :password", { password: `%${searchParams.password}%` })            
+            .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -128,6 +128,17 @@ class ClientService {
 
     }
 
+    async getClientLogin(email, reqPassword) {
+
+        const client = await this.clientRepository.findOne({ where: { email: email } });
+
+        console.log(client.firstName)
+        const password = client.dni.toString()
+        if (reqPassword != password) {
+            throw new Error("Constraseña incorrecta")
+        }
+        return client;
+    }
 }
 
 export { ClientService };

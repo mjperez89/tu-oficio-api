@@ -8,6 +8,7 @@ class ClientController {
 
     constructor() {
         this.clientService = new ClientService();
+        this.handleLoginClient = this.handleLoginClient.bind(this);
         this.handleCreateClient = this.handleCreateClient.bind(this);
         this.handleDeleteClient = this.handleDeleteClient.bind(this);
         this.handleGetClientData = this.handleGetClientData.bind(this);
@@ -128,6 +129,21 @@ class ClientController {
             response.status(400).send(err.toString());
         }
 
+    }
+    async handleLoginClient(request: Request, response: Response) {
+        console.log(request.body)
+        try {
+            const { email, password } = request.body;
+
+            const client = await this.clientService.getClientLogin(email, password);
+
+            response.status(200).json({ message: 'Inicio de sesión exitoso' })
+
+        }
+        catch (error) {
+            console.log(error)
+            response.status(401).json({ message: 'Credenciales incorrectas' });
+        }
     }
 }
 export { ClientController };

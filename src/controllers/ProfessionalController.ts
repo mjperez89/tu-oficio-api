@@ -7,6 +7,7 @@ class ProfessionalController {
 
     constructor() {
         this.professionalService = new ProfessionalService();
+        this.handleLoginProfessional = this.handleLoginProfessional.bind(this);
         this.handleCreateProfessional = this.handleCreateProfessional.bind(this);
         this.handleDeleteProfessional = this.handleDeleteProfessional.bind(this);
         this.handleGetProfessionalData = this.handleGetProfessionalData.bind(this);
@@ -150,6 +151,22 @@ class ProfessionalController {
             response.status(400).send(err.toString());
         }
 
+    }
+
+    async handleLoginProfessional(request: Request, response: Response) {
+        console.log(request.body)
+        try {
+            const { email, password } = request.body;
+
+            const professional = await this.professionalService.getProfessionalLogin(email,password);
+
+            response.status(200).json({ message: 'Inicio de sesión exitoso' })
+
+        }
+        catch (error) {
+            console.log(error)
+            response.status(401).json({ message: 'Credenciales incorrectas' });
+        }
     }
 }
 export { ProfessionalController };
