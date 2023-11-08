@@ -43,9 +43,7 @@ class ClientService {
             throw new Error("Email ya existe.");
         }
 
-        const birthDateObj = new Date(birthDate);
-        const today = new Date();
-        const age = today.getFullYear() - birthDateObj.getFullYear();
+        const age = calculateAge(birthDate)
 
         const userName = generateRandomUsername(firstName, lastName);
 
@@ -142,6 +140,15 @@ function generateRandomUsername(firstName: string, lastName: string): string {
     // Generar un nombre de usuario aleatorio (por ejemplo, concatenando las primeras letras del nombre y apellido)
     const randomUsername = `${firstName[0]}${lastName[0]}_${Math.floor(Math.random() * 10000)}`;
     return randomUsername;
+}
+function calculateAge(birthDate: string){
+    const birthDateObj = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    if (today.getMonth() < birthDateObj.getMonth() || (today.getMonth() === birthDateObj.getMonth() && today.getDate() < birthDateObj.getDate())) {
+        age--;
+    }
+    return age
 }
 
 export { ClientService };
