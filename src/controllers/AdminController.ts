@@ -18,7 +18,7 @@ class AdminController {
     }
 
     async handleCreateAdmin(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
 
         try {
             const admin = await this.adminService.create({
@@ -30,8 +30,8 @@ class AdminController {
                 address,
                 birthDate,
                 dni,
-                userName
-
+                userName,
+                password
             });
             response.status(200).json(admin)
 
@@ -88,8 +88,8 @@ class AdminController {
         const searchParams = {
             firstName: String(firstName),
             lastName: String(lastName),
-            age: Number(age),
-            dni: Number(dni),
+            age: String(age),
+            dni: String(dni),
             email: String(email),
             userName: String(userName),
             phoneNumber: String(phoneNumber),
@@ -104,8 +104,7 @@ class AdminController {
         }
     }
     async handleUpdateAdmin(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
-
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
 
         const requestId = request.query.id.toString();
         console.log(requestId);
@@ -121,7 +120,8 @@ class AdminController {
                 address,
                 birthDate,
                 dni,
-                userName
+                userName,
+                password
             });
             response.status(200).send("Admin con id " + id.toString() + " actualizado con exito")
         } catch (err) {

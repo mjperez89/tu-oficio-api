@@ -16,7 +16,7 @@ class ProfessionalController {
     }
 
     async handleCreateProfessional(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, registrationNumber, specialty, yearsOfExperience } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience } = request.body;
 
         try {
             const professional = await this.professionalService.create({
@@ -28,7 +28,8 @@ class ProfessionalController {
                 address,
                 birthDate,
                 dni,
-                userName,
+                userName, 
+                password,
                 registrationNumber,
                 specialty,
                 yearsOfExperience
@@ -91,7 +92,6 @@ class ProfessionalController {
             phoneNumber,
             email,
             address,
-            birthDate,
             dni,
             userName,
             registrationNumber,
@@ -102,13 +102,13 @@ class ProfessionalController {
         const searchParams = {
             firstName: String(firstName),
             lastName: String(lastName),
-            age: Number(age),
+            age: String(age),
             phoneNumber: String(phoneNumber),
             email: String(email),
             address: String(address),
-            dni: Number(dni),
+            dni: String(dni),
             userName: String(userName),
-            registrationNumber: Number(registrationNumber),
+            registrationNumber: String(registrationNumber),
             specialty: String(specialty),
             yearsOfExperience: String(yearsOfExperience)
         };
@@ -121,7 +121,7 @@ class ProfessionalController {
         }
     }
     async handleUpdateProfessional(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, registrationNumber, specialty, yearsOfExperience } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience } = request.body;
 
         const requestId = request.query.id.toString();
         console.log(requestId);
@@ -138,7 +138,8 @@ class ProfessionalController {
                 address,
                 birthDate,
                 dni,
-                userName,
+                userName, 
+                password,
                 registrationNumber,
                 specialty,
                 yearsOfExperience

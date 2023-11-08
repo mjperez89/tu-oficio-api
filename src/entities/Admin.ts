@@ -3,13 +3,25 @@ import { User } from "./User";
 import { RolesEnum } from "./RolesEnum";
 
 
-@Entity({name:"admins"})
+@Entity({ name: "admins" })
 export class Admin extends User {
 
     @PrimaryGeneratedColumn()
     id: number
 
-    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, role: RolesEnum) {
-        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, role)
+    constructor(
+        firstName: string, 
+        lastName: string, 
+        age: string, 
+        phoneNumber: string, 
+        email: string, 
+        address: string, 
+        birthDate: string, 
+        dni: string, 
+        userName: string, 
+        password: string,
+        role: RolesEnum
+        ){
+        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, role)
     }
 }

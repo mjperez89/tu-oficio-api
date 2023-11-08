@@ -14,10 +14,11 @@ export abstract class User {
     lastName: string
 
     @Column()
-    age: number
+    age: string
 
-    @Column({ type: "bigint" })
-    phoneNumber: number
+    // @Column({ type: "bigint" })
+    @Column()
+    phoneNumber: string
 
     @Column()
     email: string
@@ -26,18 +27,33 @@ export abstract class User {
     address: string
 
     @Column()
-    birthDate: Date
+    birthDate: string
 
     @Column()
-    dni: number
+    dni: string
 
     @Column()
     userName: string
 
+    @Column()
+    password: string
+
     @Column({ type: "enum", enum: RolesEnum, default: RolesEnum.CLIENT })
     role: RolesEnum;
 
-    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, role: RolesEnum) {
+    constructor(
+        firstName: string,
+        lastName: string,
+        age: string,
+        phoneNumber: string,
+        email: string,
+        address: string,
+        birthDate: string,
+        dni: string,
+        userName: string,
+        password: string,
+        role: RolesEnum
+    ) {
         this.firstName = firstName
         this.lastName = lastName
         this.age = age
@@ -47,8 +63,7 @@ export abstract class User {
         this.birthDate = birthDate
         this.dni = dni
         this.userName = userName
+        this.password = password
         this.role = role
     }
-
-
 }

@@ -17,7 +17,7 @@ class ClientController {
     }
 
     async handleCreateClient(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
 
         try {
             const client = await this.clientService.create({
@@ -29,8 +29,8 @@ class ClientController {
                 address,
                 birthDate,
                 dni,
-                userName
-
+                userName,
+                password
             });
             response.status(200).json(client)
 
@@ -83,14 +83,15 @@ class ClientController {
         }
     }
     async handleSearchClient(request: Request, response: Response) {
-        const { firstName, lastName, age, dni, email, userName, phoneNumber, address } = request.query;
+        const { firstName, lastName, age, dni, email, userName, password, phoneNumber, address } = request.query;
         const searchParams = {
             firstName: String(firstName),
             lastName: String(lastName),
-            age: Number(age),
-            dni: Number(dni),
+            age: String(age),
+            dni: String(dni),
             email: String(email),
             userName: String(userName),
+            password: String(password),
             phoneNumber: String(phoneNumber),
             address: String(address)
         };
@@ -103,7 +104,7 @@ class ClientController {
         }
     }
     async handleUpdateClient(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
 
         const requestId = request.query.id.toString();
         console.log(requestId);
@@ -119,7 +120,8 @@ class ClientController {
                 address,
                 birthDate,
                 dni,
-                userName
+                userName,
+                password
             });
             response.status(200).send("Cliente con id " + id.toString() + " actualizado con exito")
         } catch (err) {

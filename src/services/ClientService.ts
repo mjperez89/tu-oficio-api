@@ -9,22 +9,22 @@ interface IClientCreate {
     id?: number;
     firstName: string;
     lastName: string;
-    age: number;
-    phoneNumber: number;
+    age: string;
+    phoneNumber: string;
     email: string;
     address: string;
-    birthDate: Date;
-    dni: number;
+    birthDate: string;
+    dni: string;
     userName: string;
-
+    password: string;
 }
 
 class ClientService {
 
     clientRepository = AppDataSource.getRepository(Client)
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IClientCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
+    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IClientCreate) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password) {
             throw new Error("Por favor complete todos los datos.");
         }
 
@@ -40,7 +40,7 @@ class ClientService {
             throw new Error("Email ya existe.");
         }
 
-        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, RolesEnum.CLIENT)
+        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.CLIENT)
 
         await this.clientRepository.save(client);
 
@@ -84,10 +84,11 @@ class ClientService {
     async search(searchParams: {
         firstName?: string,
         lastName?: string,
-        age?: number,
-        dni?: number,
+        age?: string,
+        dni?: string,
         email?: string,
         userName?: string,
+        password?: string,
         phoneNumber?: string,
         address?: string
     }) {
@@ -104,6 +105,7 @@ class ClientService {
             .orWhere("age like :age", { age: `%${searchParams.age}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
+            .orWhere("password like :password", { password: `%${searchParams.password}%` })            
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -112,12 +114,12 @@ class ClientService {
         return client;
     }
 
-    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IClientCreate) {
+    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IClientCreate) {
 
         const client = await this.clientRepository
             .createQueryBuilder()
             .update(Client)
-            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName })
+            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password })
             .where("id = :id", { id })
             .execute();
         if (client.affected === 0) {

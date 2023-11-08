@@ -6,23 +6,24 @@ interface IProfessionalCreate {
     id?: number;
     firstName: string;
     lastName: string;
-    age: number;
-    phoneNumber: number;
+    age: string;
+    phoneNumber: string;
     email: string;
     address: string;
-    birthDate: Date;
-    dni: number;
+    birthDate: string;
+    dni: string;
     userName: string;
-    registrationNumber: number;
+    password: string;
+    registrationNumber: string;
     specialty: string;
-    yearsOfExperience: number;
+    yearsOfExperience: string;
 }
 
 class ProfessionalService {
     professionalRepository = AppDataSource.getRepository(Professional);
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !registrationNumber || !specialty || !yearsOfExperience) {
+    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password || !registrationNumber || !specialty || !yearsOfExperience) {
             throw new Error("Por favor complete todos los datos.");
         }
 
@@ -41,7 +42,7 @@ class ProfessionalService {
         }
 
         const professional = new Professional(
-            firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName,
+            firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
             RolesEnum.PROFESSIONAL, registrationNumber, specialty, yearsOfExperience);
 
         await this.professionalRepository.save(professional);
@@ -82,14 +83,15 @@ class ProfessionalService {
     async search(searchParams: {
         firstName?: String,
         lastName?: String,
-        age?: Number,
+        age?: String,
         phoneNumber?: String,
         email?: String,
         address?: String,
-        birthDate?: Date,
-        dni?: Number,
+        birthDate?: String,
+        dni?: String,
         userName?: String,
-        registrationNumber?: Number,
+        password?: String,
+        registrationNumber?: String,
         specialty?: String,
         yearsOfExperience?: String
     }) {
@@ -104,6 +106,7 @@ class ProfessionalService {
             .orWhere("dni like :dni", { dni: `%${searchParams.dni}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
+            .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -112,14 +115,14 @@ class ProfessionalService {
     }
 
     async update({
-        id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName,
+        id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
         registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
 
         const professional = await this.professionalRepository
             .createQueryBuilder()
             .update(Professional)
             .set({
-                firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName,
+                firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
                 registrationNumber, specialty, yearsOfExperience
             })
             .where("id = :id", { id })

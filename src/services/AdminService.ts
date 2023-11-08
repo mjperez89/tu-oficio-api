@@ -9,22 +9,22 @@ interface IAdminCreate {
     id?: number;
     firstName: string;
     lastName: string;
-    age: number;
-    phoneNumber: number;
+    age: string;
+    phoneNumber: string;
     email: string;
     address: string;
-    birthDate: Date;
-    dni: number;
+    birthDate: string;
+    dni: string;
     userName: string;
-
+    password: string;
 }
 
 class AdminService {
 
     adminRepository = AppDataSource.getRepository(Admin)
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IAdminCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName) {
+    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IAdminCreate) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password) {
             throw new Error("Por favor complete todos los datos.");
         }
 
@@ -41,7 +41,7 @@ class AdminService {
             throw new Error("Email ya existe.");
         }
 
-        const adm = new Admin(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, RolesEnum.ADMIN)
+        const adm = new Admin(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.ADMIN)
 
         await this.adminRepository.save(adm);
 
@@ -86,10 +86,11 @@ class AdminService {
     async search(searchParams: {
         firstName?: string,
         lastName?: string,
-        age?: number,
-        dni?: number,
+        age?: string,
+        dni?: string,
         email?: string,
         userName?: string,
+        password?: string;
         phoneNumber?: string,
         address?: string
     }) {
@@ -105,6 +106,7 @@ class AdminService {
             .orWhere("age like :age", { age: `%${searchParams.age}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
+            .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -113,12 +115,12 @@ class AdminService {
         return admin;
     }
 
-    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName }: IAdminCreate) {
+    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IAdminCreate) {
 
         const admin = await this.adminRepository
             .createQueryBuilder()
             .update(Admin)
-            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName })
+            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password })
             .where("id = :id", { id })
             .execute();
         if (admin.affected === 0) {
@@ -133,10 +135,10 @@ class AdminService {
 
         console.log(admin.firstName)
         const password = admin.dni.toString()
-        if(reqPassword != password){
+        if (reqPassword != password) {
             throw new Error("Constraseña incorrecta")
         }
-        
+
         return admin;
     }
 
