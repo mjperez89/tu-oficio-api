@@ -6,28 +6,26 @@ interface IProfessionalCreate {
     id?: number;
     firstName: string;
     lastName: string;
-    age: string;
+    age?: string;
     phoneNumber: string;
     email: string;
     address: string;
     birthDate: string;
     dni: string;
-    userName: string;
+    userName?: string;
     password: string;
     registrationNumber: string;
     specialty: string;
-    yearsOfExperience: string;
+    yearsOfExperience?: string;
 }
 
 class ProfessionalService {
     professionalRepository = AppDataSource.getRepository(Professional);
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password || !registrationNumber || !specialty || !yearsOfExperience) {
+    async create({ firstName, lastName, phoneNumber, email, address, birthDate, dni, password, registrationNumber, specialty }: IProfessionalCreate) {
+        if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password || !registrationNumber || !specialty) {
             throw new Error("Por favor complete todos los datos.");
         }
-
-        // const professionalRepository = AppDataSource.getRepository(Professional);
 
         const professionalAlreadyExists = await this.professionalRepository.findOne({ where: { dni: dni } });
 
@@ -40,9 +38,12 @@ class ProfessionalService {
         if (emailAlreadyExists) {
             throw new Error("Email ya existe.");
         }
+        const age = calculateAge(birthDate)
+        const userName = generateRandomUsername(firstName, lastName);
+        const yearsOfExperience = "0"
 
         const professional = new Professional(
-            firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
+            firstName, lastName, age.toString(), phoneNumber, email, address, birthDate, dni, userName, password,
             RolesEnum.PROFESSIONAL, registrationNumber, specialty, yearsOfExperience);
 
         await this.professionalRepository.save(professional);
@@ -133,6 +134,20 @@ class ProfessionalService {
         }
     }
 
+}
+function generateRandomUsername(firstName: string, lastName: string): string {
+    const randomUsername = `${firstName[0]}${lastName[0]}_${Math.floor(Math.random() * 10000)}`;
+    return randomUsername;
+}
+
+function calculateAge(birthDate: string) {
+    const birthDateObj = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    if (today.getMonth() < birthDateObj.getMonth() || (today.getMonth() === birthDateObj.getMonth() && today.getDate() < birthDateObj.getDate())) {
+        age--;
+    }
+    return age
 }
 
 export { ProfessionalService };

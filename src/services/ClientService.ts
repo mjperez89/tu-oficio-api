@@ -1,10 +1,6 @@
-import { getCustomRepository } from "typeorm";
-import { ClientRepository } from "../repositories/ClientRepository";
 import { Client } from "../entities/Client";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
-import { error } from "console";
-import { type } from "os";
 
 interface IClientCreate {
     id?: number;
@@ -23,10 +19,9 @@ interface IClientCreate {
 class ClientService {
 
     clientRepository = AppDataSource.getRepository(Client)
-    
+
 
     async create({ firstName, lastName, phoneNumber, email, address, birthDate, dni, password }: IClientCreate) {
-        console.log(typeof birthDate + " -- ")
         if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password) {
             throw new Error("Por favor complete todos los datos.");
         }
@@ -112,7 +107,7 @@ class ClientService {
             .orWhere("age like :age", { age: `%${searchParams.age}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
-            .orWhere("password like :password", { password: `%${searchParams.password}%` })            
+            .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -137,11 +132,11 @@ class ClientService {
 
 }
 function generateRandomUsername(firstName: string, lastName: string): string {
-    // Generar un nombre de usuario aleatorio (por ejemplo, concatenando las primeras letras del nombre y apellido)
     const randomUsername = `${firstName[0]}${lastName[0]}_${Math.floor(Math.random() * 10000)}`;
     return randomUsername;
 }
-function calculateAge(birthDate: string){
+
+function calculateAge(birthDate: string) {
     const birthDateObj = new Date(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birthDateObj.getFullYear();

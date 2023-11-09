@@ -20,7 +20,7 @@ class ClientController {
         const { firstName, lastName, email, address, phoneNumber, birthDate, dni, password } = request.body;
         console.log(request.body)
         try {
-            const client = await this.clientService.create({
+            await this.clientService.create({
                 firstName,
                 lastName,
                 phoneNumber,
