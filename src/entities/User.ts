@@ -41,6 +41,10 @@ export abstract class User {
     @Column({ type: "enum", enum: RolesEnum, default: RolesEnum.CLIENT })
     role: RolesEnum;
 
+    // agregar el path a la imagen de perfil (se puede poner en public/images)
+    @Column()
+    profilePhotoUrl: string
+
     constructor(
         firstName: string,
         lastName: string,
@@ -52,7 +56,8 @@ export abstract class User {
         dni: string,
         userName: string,
         password: string,
-        role: RolesEnum
+        role: RolesEnum,
+        profilePhotoUrl: string
     ) {
         this.firstName = firstName
         this.lastName = lastName
@@ -65,5 +70,6 @@ export abstract class User {
         this.userName = userName
         this.password = password
         this.role = role
+        this.profilePhotoUrl = profilePhotoUrl
     }
 }

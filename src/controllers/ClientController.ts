@@ -18,7 +18,7 @@ class ClientController {
     }
 
     async handleCreateClient(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl } = request.body;
 
         try {
             const client = await this.clientService.create({
@@ -31,7 +31,8 @@ class ClientController {
                 birthDate,
                 dni,
                 userName,
-                password
+                password,
+                profilePhotoUrl
             });
             response.status(200).json(client)
 
@@ -105,7 +106,7 @@ class ClientController {
         }
     }
     async handleUpdateClient(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl } = request.body;
 
         const requestId = request.query.id.toString();
         console.log(requestId);
@@ -122,7 +123,8 @@ class ClientController {
                 birthDate,
                 dni,
                 userName,
-                password
+                password,
+                profilePhotoUrl
             });
             response.status(200).send("Cliente con id " + id.toString() + " actualizado con exito")
         } catch (err) {

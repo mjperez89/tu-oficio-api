@@ -3,7 +3,7 @@ import { AdminRepository } from "../repositories/AdminRepository";
 import { Admin } from "../entities/Admin";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
-import { error } from "console";
+import * as bcrypt from "bcrypt";
 
 interface IAdminCreate {
     id?: number;
@@ -17,18 +17,24 @@ interface IAdminCreate {
     dni: string;
     userName: string;
     password: string;
+    profilePhotoUrl: string;
 }
 
 class AdminService {
 
     adminRepository = AppDataSource.getRepository(Admin)
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IAdminCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password) {
+    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl }: IAdminCreate) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password || !profilePhotoUrl) {
             throw new Error("Por favor complete todos los datos.");
         }
 
+        //generar salt para hashing de password
+        const saltRounds = 10;
 
+        //hasheamos el password
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
         const adminAlreadyExists = await this.adminRepository.findOne({ where: { dni: dni } });
 
         if (adminAlreadyExists) {
@@ -41,7 +47,7 @@ class AdminService {
             throw new Error("Email ya existe.");
         }
 
-        const adm = new Admin(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.ADMIN)
+        const adm = new Admin(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, hashedPassword, RolesEnum.ADMIN, profilePhotoUrl)
 
         await this.adminRepository.save(adm);
 
@@ -67,18 +73,19 @@ class AdminService {
     }
 
     async getData(id: number) {
-
-
         const admin = await this.adminRepository.findOne({ where: { id: id } });
+        return admin;
 
+    }
+
+    async getDataByUsername(username: string) {
+        const admin = await this.adminRepository.findOne({ where: { userName: username } });
         return admin;
 
     }
 
     async list() {
-
         const admins = await this.adminRepository.find();
-
         return admins;
 
     }
@@ -115,12 +122,12 @@ class AdminService {
         return admin;
     }
 
-    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IAdminCreate) {
+    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl }: IAdminCreate) {
 
         const admin = await this.adminRepository
             .createQueryBuilder()
             .update(Admin)
-            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password })
+            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl })
             .where("id = :id", { id })
             .execute();
         if (admin.affected === 0) {
@@ -129,14 +136,27 @@ class AdminService {
 
     }
 
-    async getAdminLogin(email, reqPassword) {
+    async getAdminLogin(email: string, reqPassword: string) {
 
         const admin = await this.adminRepository.findOne({ where: { email: email } });
+//      probamos con bcrypt
+        // console.log(admin.firstName)
+        // const password = admin.dni.toString()
+        // if (reqPassword != password) {
+        //     throw new Error("Constraseña incorrecta")
+        // }
 
-        console.log(admin.firstName)
-        const password = admin.dni.toString()
-        if (reqPassword != password) {
-            throw new Error("Constraseña incorrecta")
+        if (!admin) {
+            throw new Error("no se encontró ese correo");
+        }
+    
+        const storedPassword = admin.password; // este es el password hasheado en DB
+    
+        // comparamos con el password ingresado por front
+        const passwordMatch = await bcrypt.compare(reqPassword, storedPassword);
+    
+        if (!passwordMatch) {
+            throw new Error("contraseña incorrecta");
         }
 
         return admin;

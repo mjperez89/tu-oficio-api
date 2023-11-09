@@ -17,6 +17,9 @@ export class Professional extends User {
     @Column()
     yearsOfExperience: string
 
+    @Column()
+    biography: string
+
     constructor(
         firstName: string,
         lastName: string,
@@ -29,14 +32,17 @@ export class Professional extends User {
         userName: string,
         password: string,
         role: RolesEnum,
+        profilePhotoUrl: string,
         registrationNumber: string,
         specialty: string,
-        yearsOfExperience: string
+        yearsOfExperience: string,
+        biography: string
     ) {
-        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, role)
+        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, role, profilePhotoUrl)
         this.registrationNumber = registrationNumber;
         this.specialty = specialty;
         this.yearsOfExperience = yearsOfExperience;
+        this.biography = biography
     }
 
 }

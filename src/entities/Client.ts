@@ -20,8 +20,9 @@ export class Client extends User {
         dni: string,
         userName: string,
         password: string,
-        role: RolesEnum
+        role: RolesEnum,
+        profilePhotoUrl: string
     ) {
-        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, role)
+        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, role, profilePhotoUrl)
     }
 }

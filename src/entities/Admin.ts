@@ -10,18 +10,19 @@ export class Admin extends User {
     id: number
 
     constructor(
-        firstName: string, 
-        lastName: string, 
-        age: string, 
-        phoneNumber: string, 
-        email: string, 
-        address: string, 
-        birthDate: string, 
-        dni: string, 
-        userName: string, 
+        firstName: string,
+        lastName: string,
+        age: string,
+        phoneNumber: string,
+        email: string,
+        address: string,
+        birthDate: string,
+        dni: string,
+        userName: string,
         password: string,
-        role: RolesEnum
-        ){
-        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, role)
+        role: RolesEnum,
+        profilePhotoUrl: string,
+    ) {
+        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, role, profilePhotoUrl)
     }
 }

@@ -14,16 +14,18 @@ interface IProfessionalCreate {
     dni: string;
     userName: string;
     password: string;
+    profilePhotoUrl: string;
     registrationNumber: string;
     specialty: string;
     yearsOfExperience: string;
+    biography: string;
 }
 
 class ProfessionalService {
     professionalRepository = AppDataSource.getRepository(Professional);
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password || !registrationNumber || !specialty || !yearsOfExperience) {
+    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl, registrationNumber, specialty, yearsOfExperience, biography }: IProfessionalCreate) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password || !profilePhotoUrl || !registrationNumber || !specialty || !yearsOfExperience || !biography) {
             throw new Error("Por favor complete todos los datos.");
         }
 
@@ -43,7 +45,7 @@ class ProfessionalService {
 
         const professional = new Professional(
             firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
-            RolesEnum.PROFESSIONAL, registrationNumber, specialty, yearsOfExperience);
+            RolesEnum.PROFESSIONAL, profilePhotoUrl, registrationNumber, specialty, yearsOfExperience, biography);
 
         await this.professionalRepository.save(professional);
 
@@ -115,15 +117,15 @@ class ProfessionalService {
     }
 
     async update({
-        id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
-        registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
+        id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl,
+        registrationNumber, specialty, yearsOfExperience, biography }: IProfessionalCreate) {
 
         const professional = await this.professionalRepository
             .createQueryBuilder()
             .update(Professional)
             .set({
-                firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
-                registrationNumber, specialty, yearsOfExperience
+                firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl,
+                registrationNumber, specialty, yearsOfExperience, biography
             })
             .where("id = :id", { id })
             .execute();

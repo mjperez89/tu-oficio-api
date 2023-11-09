@@ -17,7 +17,7 @@ class ProfessionalController {
     }
 
     async handleCreateProfessional(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl, registrationNumber, specialty, yearsOfExperience, biography } = request.body;
 
         try {
             const professional = await this.professionalService.create({
@@ -31,10 +31,11 @@ class ProfessionalController {
                 dni,
                 userName, 
                 password,
+                profilePhotoUrl,
                 registrationNumber,
                 specialty,
-                yearsOfExperience
-
+                yearsOfExperience,
+                biography
             }).then(() => {
                 response.status(200).json(professional)
             });
@@ -122,7 +123,7 @@ class ProfessionalController {
         }
     }
     async handleUpdateProfessional(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience } = request.body;
+        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl, registrationNumber, specialty, yearsOfExperience, biography } = request.body;
 
         const requestId = request.query.id.toString();
         console.log(requestId);
@@ -141,9 +142,11 @@ class ProfessionalController {
                 dni,
                 userName, 
                 password,
+                profilePhotoUrl,
                 registrationNumber,
                 specialty,
-                yearsOfExperience
+                yearsOfExperience, 
+                biography
             });
             response.status(200).send("Profesional con id " + id.toString() + " actualizado con éxito");
         } catch (err) {

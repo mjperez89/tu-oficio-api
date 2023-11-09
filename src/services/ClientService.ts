@@ -17,14 +17,15 @@ interface IClientCreate {
     dni: string;
     userName: string;
     password: string;
+    profilePhotoUrl: string;
 }
 
 class ClientService {
 
     clientRepository = AppDataSource.getRepository(Client)
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IClientCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password) {
+    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl }: IClientCreate) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password || !profilePhotoUrl) {
             throw new Error("Por favor complete todos los datos.");
         }
 
@@ -40,7 +41,7 @@ class ClientService {
             throw new Error("Email ya existe.");
         }
 
-        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.CLIENT)
+        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.CLIENT, profilePhotoUrl)
 
         await this.clientRepository.save(client);
 
@@ -114,12 +115,12 @@ class ClientService {
         return client;
     }
 
-    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IClientCreate) {
+    async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl }: IClientCreate) {
 
         const client = await this.clientRepository
             .createQueryBuilder()
             .update(Client)
-            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password })
+            .set({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl })
             .where("id = :id", { id })
             .execute();
         if (client.affected === 0) {
