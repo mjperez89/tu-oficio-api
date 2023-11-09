@@ -1,6 +1,7 @@
 import { Professional } from "../entities/Professional";
 import { AppDataSource } from "../data-source";
 import { RolesEnum } from "../entities/RolesEnum";
+import * as bcrypt from "bcrypt";
 
 interface IProfessionalCreate {
     id?: number;
@@ -29,7 +30,11 @@ class ProfessionalService {
             throw new Error("Por favor complete todos los datos.");
         }
 
-        // const professionalRepository = AppDataSource.getRepository(Professional);
+        //generar salt para hashing de password
+        const saltRounds = 10;
+
+        //hasheamos el password
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const professionalAlreadyExists = await this.professionalRepository.findOne({ where: { dni: dni } });
 
@@ -108,7 +113,7 @@ class ProfessionalService {
             .orWhere("dni like :dni", { dni: `%${searchParams.dni}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
-            .orWhere("password like :password", { password: `%${searchParams.password}%` })
+            // .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -120,6 +125,11 @@ class ProfessionalService {
         id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl,
         registrationNumber, specialty, yearsOfExperience, biography }: IProfessionalCreate) {
 
+        //generar salt para hashing de password
+        const saltRounds = 10;
+        //hasheamos el password
+        password = await bcrypt.hash(password, saltRounds);
+        
         const professional = await this.professionalRepository
             .createQueryBuilder()
             .update(Professional)

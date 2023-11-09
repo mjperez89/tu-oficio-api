@@ -113,7 +113,7 @@ class AdminService {
             .orWhere("age like :age", { age: `%${searchParams.age}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
-            .orWhere("password like :password", { password: `%${searchParams.password}%` })
+            // .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -123,6 +123,11 @@ class AdminService {
     }
 
     async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl }: IAdminCreate) {
+
+        //generar salt para hashing de password
+        const saltRounds = 10;
+        //hasheamos el password
+        password = await bcrypt.hash(password, saltRounds);
 
         const admin = await this.adminRepository
             .createQueryBuilder()

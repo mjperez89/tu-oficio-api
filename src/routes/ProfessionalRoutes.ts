@@ -6,7 +6,6 @@ const professionalRoutes = Router();
 const professionalController  = new ProfessionalController();
 
 professionalRoutes.post("/login", professionalController.handleLoginProfessional);
-// deshabilitamos temporalmente auth.isLoggedIn hasta definir el método de autenticación
 professionalRoutes.get("/list-professionals", professionalController.handleListProfessionals);
 // professionalRoutes.get("professional/add-professional", (request, response) => {
     // response.render("professional/addprofessional")});

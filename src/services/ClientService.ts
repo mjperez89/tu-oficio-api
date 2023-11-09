@@ -3,7 +3,7 @@ import { ClientRepository } from "../repositories/ClientRepository";
 import { Client } from "../entities/Client";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
-import { error } from "console";
+import * as bcrypt from "bcrypt";
 
 interface IClientCreate {
     id?: number;
@@ -25,9 +25,15 @@ class ClientService {
     clientRepository = AppDataSource.getRepository(Client)
 
     async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl }: IClientCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password || !profilePhotoUrl) {
+        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password ) {
             throw new Error("Por favor complete todos los datos.");
         }
+
+        //generar salt para hashing de password
+        const saltRounds = 10;
+
+        //hasheamos el password
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const clientAlreadyExists = await this.clientRepository.findOne({ where: { dni: dni } });
 
@@ -41,7 +47,7 @@ class ClientService {
             throw new Error("Email ya existe.");
         }
 
-        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.CLIENT, profilePhotoUrl)
+        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, hashedPassword, RolesEnum.CLIENT, profilePhotoUrl)
 
         await this.clientRepository.save(client);
 
@@ -106,7 +112,7 @@ class ClientService {
             .orWhere("age like :age", { age: `%${searchParams.age}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
-            .orWhere("password like :password", { password: `%${searchParams.password}%` })
+            // .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -117,6 +123,11 @@ class ClientService {
 
     async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, profilePhotoUrl }: IClientCreate) {
 
+        //generar salt para hashing de password
+        const saltRounds = 10;
+        //hasheamos el password
+        password = await bcrypt.hash(password, saltRounds);
+        
         const client = await this.clientRepository
             .createQueryBuilder()
             .update(Client)
