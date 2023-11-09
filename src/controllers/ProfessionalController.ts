@@ -17,31 +17,28 @@ class ProfessionalController {
     }
 
     async handleCreateProfessional(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience } = request.body;
+        const { firstName, lastName, email, address, phoneNumber, birthDate, dni, registrationNumber, specialty, password } = request.body;
 
         try {
-            const professional = await this.professionalService.create({
+            await this.professionalService.create({
                 firstName,
                 lastName,
-                age,
                 phoneNumber,
                 email,
                 address,
                 birthDate,
                 dni,
-                userName, 
                 password,
                 registrationNumber,
-                specialty,
-                yearsOfExperience
+                specialty
 
-            }).then(() => {
-                response.status(200).json(professional)
-            });
+            })
+            response.status(201).json({ message: 'Registro exitoso' })
+            console.log("Profesional registrado con éxito.")
 
         } catch (err) {
-            console.log("error creando prof " + err)
-            response.status(400).send("" + err)
+            console.log(err.toString())
+            response.status(400).json({ message: err.toString() })
         }
 
     }

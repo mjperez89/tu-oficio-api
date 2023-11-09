@@ -1,21 +1,18 @@
-import { getCustomRepository } from "typeorm";
-import { ClientRepository } from "../repositories/ClientRepository";
 import { Client } from "../entities/Client";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
-import { error } from "console";
 
 interface IClientCreate {
     id?: number;
     firstName: string;
     lastName: string;
-    age: string;
+    age?: string;
     phoneNumber: string;
     email: string;
     address: string;
     birthDate: string;
     dni: string;
-    userName: string;
+    userName?: string;
     password: string;
 }
 
@@ -23,8 +20,9 @@ class ClientService {
 
     clientRepository = AppDataSource.getRepository(Client)
 
-    async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IClientCreate) {
-        if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password) {
+
+    async create({ firstName, lastName, phoneNumber, email, address, birthDate, dni, password }: IClientCreate) {
+        if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password) {
             throw new Error("Por favor complete todos los datos.");
         }
 
@@ -40,7 +38,11 @@ class ClientService {
             throw new Error("Email ya existe.");
         }
 
-        const client = new Client(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.CLIENT)
+        const age = calculateAge(birthDate)
+
+        const userName = generateRandomUsername(firstName, lastName);
+
+        const client = new Client(firstName, lastName, age.toString(), phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.CLIENT)
 
         await this.clientRepository.save(client);
 
@@ -139,6 +141,20 @@ class ClientService {
         }
         return client;
     }
+}
+function generateRandomUsername(firstName: string, lastName: string): string {
+    const randomUsername = `${firstName[0]}${lastName[0]}_${Math.floor(Math.random() * 10000)}`;
+    return randomUsername;
+}
+
+function calculateAge(birthDate: string) {
+    const birthDateObj = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    if (today.getMonth() < birthDateObj.getMonth() || (today.getMonth() === birthDateObj.getMonth() && today.getDate() < birthDateObj.getDate())) {
+        age--;
+    }
+    return age
 }
 
 export { ClientService };

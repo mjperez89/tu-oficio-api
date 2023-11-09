@@ -18,27 +18,25 @@ class ClientController {
     }
 
     async handleCreateClient(request: Request, response: Response) {
-        const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
-
+        const { firstName, lastName, email, address, phoneNumber, birthDate, dni, password } = request.body;
+        console.log(request.body)
         try {
-            const client = await this.clientService.create({
+            await this.clientService.create({
                 firstName,
                 lastName,
-                age,
                 phoneNumber,
                 email,
                 address,
                 birthDate,
                 dni,
-                userName,
                 password
             });
-            response.status(200).json(client)
+            response.status(201).json({ message: 'Registro exitoso' })
+            console.log("Cliente registrado con éxito.")
 
         } catch (err) {
-            console.log("error cldo " + err)
-            response.status(400).send("" + err)
-
+            console.log(err.toString())
+            response.status(400).json({ message: err.toString() })
         }
 
     }
