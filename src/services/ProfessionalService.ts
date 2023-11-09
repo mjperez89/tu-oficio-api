@@ -138,7 +138,7 @@ class ProfessionalService {
         const professional = await this.professionalRepository.findOne({ where: { email: email } });
 
         console.log(professional.firstName)
-        const password = professional.dni.toString()
+        const password = professional.password
         if (reqPassword != password) {
             throw new Error("Constraseña incorrecta")
         }

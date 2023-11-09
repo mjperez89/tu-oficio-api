@@ -5,7 +5,7 @@ import auth from "../../lib/auth";
 const clientRoutes = Router();
 const clientController  = new ClientController();
 
-clientRoutes.post("/login", clientController.handleLoginClient);
+clientRoutes.post("/login-client", clientController.handleLoginClient);
 clientRoutes.get("/list-client", clientController.handleListClients);
 clientRoutes.post("/add-client", clientController.handleCreateClient);
 clientRoutes.get("/searchClient", clientController.handleSearchClient);

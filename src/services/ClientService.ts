@@ -135,7 +135,7 @@ class ClientService {
         const client = await this.clientRepository.findOne({ where: { email: email } });
 
         console.log(client.firstName)
-        const password = client.dni.toString()
+        const password = client.password
         if (reqPassword != password) {
             throw new Error("Constraseña incorrecta")
         }
