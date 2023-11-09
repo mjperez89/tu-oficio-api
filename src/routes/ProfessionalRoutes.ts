@@ -13,7 +13,7 @@ professionalRoutes.get("/list-professionals", professionalController.handleListP
 professionalRoutes.post("/add-professional", professionalController.handleCreateProfessional);
 professionalRoutes.get("/searchProfessional", professionalController.handleSearchProfessional);
 professionalRoutes.post("/edit-professional", professionalController.handleUpdateProfessional);
-professionalRoutes.get("/editProfessional", professionalController.handleGetProfessionalData);
+professionalRoutes.get("/get-professional", professionalController.handleGetProfessionalData);
 professionalRoutes.post("/delete-professional", professionalController.handleDeleteProfessional);
 
 export { professionalRoutes };

@@ -67,10 +67,10 @@ class ClientService {
         return client;
     }
 
-    async getData(id: number) {
+    async getData(email: string) {
 
-        const client = await this.clientRepository.findOne({ where: { id: id } });
-
+        const client = await this.clientRepository.findOne({ where: { email: email } });
+        client.password="****"
         return client;
 
     }

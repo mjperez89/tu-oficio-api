@@ -59,11 +59,10 @@ class ProfessionalController {
 
     async handleGetProfessionalData(request: Request, response: Response) {
         try {
-            const requestId = request.query.id.toString();
-            console.log(requestId);
-            const id = parseInt(requestId, 10);
+            const email = request.query.email.toString();
+            console.log(email);
 
-            const professional = await this.professionalService.getData(id);
+            const professional = await this.professionalService.getData(email);
 
             response.status(200).json(professional)
         }

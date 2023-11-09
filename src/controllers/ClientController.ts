@@ -56,12 +56,10 @@ class ClientController {
 
     async handleGetClientData(request: Request, response: Response) {
         try {
-            const requestId = request.query.id.toString();
-            console.log(requestId);
-            const id = parseInt(requestId, 10);
+            const email = request.query.email.toString();
+            console.log(email);
 
-
-            const admin = await this.clientService.getData(id);
+            const admin = await this.clientService.getData(email);
 
             response.status(200).json(admin)
 

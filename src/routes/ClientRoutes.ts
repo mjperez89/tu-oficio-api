@@ -10,7 +10,7 @@ clientRoutes.get("/list-client", clientController.handleListClients);
 clientRoutes.post("/add-client", clientController.handleCreateClient);
 clientRoutes.get("/searchClient", clientController.handleSearchClient);
 clientRoutes.post("/edit-client", clientController.handleUpdateClient);
-clientRoutes.get("/editClient", clientController.handleGetClientData);
+clientRoutes.get("/get-client", clientController.handleGetClientData);
 clientRoutes.post("/delete-client", clientController.handleDeleteClient);
 
 export { clientRoutes };

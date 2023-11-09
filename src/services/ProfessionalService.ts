@@ -67,9 +67,9 @@ class ProfessionalService {
         return professional;
     }
 
-    async getData(id: number) {
-        const professional = await this.professionalRepository.findOne({ where: { id: id } });
-
+    async getData(email: string) {
+        const professional = await this.professionalRepository.findOne({ where: { email: email } });
+        professional.password = "****"
         return professional;
 
     }
