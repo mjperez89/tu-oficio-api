@@ -1,6 +1,7 @@
 import { Client } from "../entities/Client";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
+import * as bcrypt from "bcrypt";
 
 interface IClientCreate {
     id?: number;
@@ -20,8 +21,13 @@ class ClientService {
 
     clientRepository = AppDataSource.getRepository(Client)
 
-
     async create({ firstName, lastName, phoneNumber, email, address, birthDate, dni, password }: IClientCreate) {
+
+        //generar salt para hashing de password
+        const saltRounds = 10;
+        //hasheamos el password
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
         if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password) {
             throw new Error("Por favor complete todos los datos.");
         }
@@ -42,7 +48,7 @@ class ClientService {
 
         const userName = generateRandomUsername(firstName, lastName);
 
-        const client = new Client(firstName, lastName, age.toString(), phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.CLIENT)
+        const client = new Client(firstName, lastName, age.toString(), phoneNumber, email, address, birthDate, dni, userName, hashedPassword, RolesEnum.CLIENT)
 
         await this.clientRepository.save(client);
 
