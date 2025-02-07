@@ -1,6 +1,7 @@
 import { Client } from "../entities/Client";
 import { AppDataSource } from "../index"
 import { RolesEnum } from "../entities/RolesEnum";
+import { helpers } from "../../lib/helpers"
 import * as bcrypt from "bcrypt";
 
 interface IClientCreate {
@@ -23,10 +24,8 @@ class ClientService {
 
     async create({ firstName, lastName, phoneNumber, email, address, birthDate, dni, password }: IClientCreate) {
 
-        //generar salt para hashing de password
-        const saltRounds = 10;
         //hasheamos el password
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const hashedPassword = await helpers.encryptPassword(password);
 
         if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password) {
             throw new Error("Por favor complete todos los datos.");
@@ -76,7 +75,7 @@ class ClientService {
     async getData(email: string) {
 
         const client = await this.clientRepository.findOne({ where: { email: email } });
-        client.password="****"
+        client.password = "****"
         return client;
 
     }
@@ -153,14 +152,42 @@ function generateRandomUsername(firstName: string, lastName: string): string {
     return randomUsername;
 }
 
-function calculateAge(birthDate: string) {
-    const birthDateObj = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birthDateObj.getFullYear();
-    if (today.getMonth() < birthDateObj.getMonth() || (today.getMonth() === birthDateObj.getMonth() && today.getDate() < birthDateObj.getDate())) {
+function isValidDate(day: number, month: number, year: number): boolean {
+    const date = new Date(year, month - 1, day);
+    return (
+        date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day
+    );
+}
+
+function calculateAge(birthdate: string): number | null {
+    const [day, month, year] = birthdate.split('/').map(Number);
+
+    if (!isValidDate(day, month, year)) {
+        console.error('Formato de fecha inválido');
+        return null;
+    }
+
+    const birthDate = new Date(year, month - 1, day);
+    const currentDate = new Date();
+
+    if (currentDate > birthDate) {
+        console.error('Ingresó una fecha futura');
+        return null;
+    }
+
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    // validamos que el cumpleaños no pasó aún. Sino, restamos un año
+    const hasBirthdayOccurred =
+        currentDate.getMonth() > birthDate.getMonth() ||
+        (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() >= birthDate.getDate());
+
+    if (!hasBirthdayOccurred) {
         age--;
     }
-    return age
+
+    return age;
 }
 
 export { ClientService };

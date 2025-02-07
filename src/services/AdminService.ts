@@ -28,7 +28,6 @@ class AdminService {
             throw new Error("Por favor complete todos los datos.");
         }
 
-
         const adminAlreadyExists = await this.adminRepository.findOne({ where: { dni: dni } });
 
         if (adminAlreadyExists) {
@@ -44,7 +43,6 @@ class AdminService {
         const adm = new Admin(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, RolesEnum.ADMIN)
 
         await this.adminRepository.save(adm);
-
 
         return adm;
     }

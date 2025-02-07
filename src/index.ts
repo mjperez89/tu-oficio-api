@@ -30,17 +30,18 @@ app.listen(port, () => {
 });
 
 AppDataSource.initialize().then(async () => {
-    /* console.log("Inserting a new admin into the database...")
+    /*console.log("Inserting a new admin into the database...")
     const admin = new Admin(
         "Martin",
         "Perez",
-        34,
-        2615153207,
+        "34",
+        "2615153207",
         "jonathanmartinperez1989@gmail.com",
         "Coquimbito, Maipu",
-        new Date(1989, 1, 17),
-        34256729,
+        "1989-01-17",
+        "34256729",
         "jmperez",
+        "test",
         RolesEnum.ADMIN
     );
     await AppDataSource.manager.save(admin)
@@ -54,17 +55,18 @@ AppDataSource.initialize().then(async () => {
     const professional = new Professional(
         "Juan Pablo",
         "Avila",
-        42,
-        2616373600,
+        "42",
+        "2616373600",
         "avilajuanp@gmail.com",
         "Godoy Cruz, Mendoza",
-        new Date(1981, 2, 16),
-        28627255,
+        "1981-02-16",
+        "28627255",
         "avilajuanp",
+        "test",
         RolesEnum.PROFESSIONAL,
-        340027,
+        "340027",
         "electricista",
-        15        
+        "15"        
     );
     await AppDataSource.manager.save(professional)
     console.log("Saved a new professional with id: " + professional.id)
@@ -73,7 +75,7 @@ AppDataSource.initialize().then(async () => {
     const professionals = await AppDataSource.manager.find(Professional)
     console.log("Loaded professionals: ", professionals)
 
-    console.log("Here you can setup and run express / fastify / any other framework.") */
+    /*console.log("Here you can setup and run express / fastify / any other framework.") */
 
 }).catch(error => console.log(error))
 

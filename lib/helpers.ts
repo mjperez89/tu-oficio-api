@@ -1,16 +1,18 @@
-import bcryptjs from "bcryptjs";
+import * as bcrypt from "bcrypt";
 
-export class helpers{
-    static async encryptPassword(password: string){
-        const salt = await bcryptjs.genSalt(10);
-        const hash = await bcryptjs.hash(password, salt);
-    
+export class helpers {
+
+    static async encryptPassword(password: string) {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+
         return hash;
     };
-    static async matchPassword(password: string, savedPassword: string){
+    
+    static async matchPassword(password: string, savedPassword: string) {
         try {
 
-            return await bcryptjs.compare(password, savedPassword);
+            return await bcrypt.compare(password, savedPassword);
         } catch (e) {
             console.log(e);
         }
