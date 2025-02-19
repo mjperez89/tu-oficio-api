@@ -1,5 +1,5 @@
 import { Professional } from "../entities/Professional";
-import { AppDataSource } from "../data-source";
+import { getRepository } from "../database";
 import { RolesEnum } from "../entities/RolesEnum";
 
 interface IProfessionalCreate {
@@ -20,9 +20,23 @@ interface IProfessionalCreate {
 }
 
 class ProfessionalService {
-    professionalRepository = AppDataSource.getRepository(Professional);
+    private professionalRepository;
+    // professionalRepository = getConnection().getRepository(Professional);
+
+    constructor() {
+        this.initRepository();
+    }
+
+    async initRepository(){
+        this.professionalRepository = await getRepository<Professional>(Professional);
+    };
 
     async create({ firstName, lastName, phoneNumber, email, address, birthDate, dni, password, registrationNumber, specialty }: IProfessionalCreate) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
+
         if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password || !registrationNumber || !specialty) {
             throw new Error("Por favor complete todos los datos.");
         }
@@ -53,6 +67,11 @@ class ProfessionalService {
 
 
     async delete(id: number) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
+
         const professional = await this.professionalRepository
             .createQueryBuilder()
             .delete()
@@ -68,17 +87,24 @@ class ProfessionalService {
     }
 
     async getData(email: string) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
         const professional = await this.professionalRepository.findOne({ where: { email: email } });
         professional.password = "****"
         return professional;
-
     }
 
     async list() {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
+
         const professionals = await this.professionalRepository.find();
 
         return professionals;
-
     }
 
     async search(searchParams: {
@@ -96,6 +122,11 @@ class ProfessionalService {
         specialty?: String,
         yearsOfExperience?: String
     }) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
+
         if (!Object.values(searchParams).some(param => param !== undefined)) {
             throw new Error("Por favor rellene al menos un campo de búsqueda");
         }
@@ -118,6 +149,10 @@ class ProfessionalService {
     async update({
         id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password,
         registrationNumber, specialty, yearsOfExperience }: IProfessionalCreate) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
 
         const professional = await this.professionalRepository
             .createQueryBuilder()
@@ -134,6 +169,10 @@ class ProfessionalService {
         }
     }
     async getProfessionalLogin(email, reqPassword) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
 
         const professional = await this.professionalRepository.findOne({ where: { email: email } });
 
@@ -162,4 +201,9 @@ function calculateAge(birthDate: string) {
 }
 
 export { ProfessionalService };
-export const professionalService = new ProfessionalService();
+// export const professionalService = new ProfessionalService();
+export const createAdminService = async () => {
+    const service = new ProfessionalService();
+    await service.initRepository();
+    return service;
+};

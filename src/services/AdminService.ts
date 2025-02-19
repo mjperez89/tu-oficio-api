@@ -1,9 +1,9 @@
-import { getCustomRepository } from "typeorm";
-import { AdminRepository } from "../repositories/AdminRepository";
+// import { getCustomRepository } from "typeorm";
+// import { AdminRepository } from "../repositories/AdminRepository";
+// import { error } from "console";
 import { Admin } from "../entities/Admin";
-import { AppDataSource } from "../index"
+import { getRepository } from "../database";
 import { RolesEnum } from "../entities/RolesEnum";
-import { error } from "console";
 
 interface IAdminCreate {
     id?: number;
@@ -20,10 +20,23 @@ interface IAdminCreate {
 }
 
 class AdminService {
+    private adminRepository;
+    // adminRepository = getConnection().getRepository(Admin);
 
-    adminRepository = AppDataSource.getRepository(Admin)
+    constructor() {
+        this.initRepository();
+    }
+
+    async initRepository(){
+        this.adminRepository = await getRepository<Admin>(Admin);
+    };
 
     async create({ firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IAdminCreate) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.adminRepository) {
+            await this.initRepository();
+        }
+
         if (!firstName || !lastName || !age || !phoneNumber || !email || !address || !birthDate || !dni || !userName || !password) {
             throw new Error("Por favor complete todos los datos.");
         }
@@ -49,6 +62,10 @@ class AdminService {
 
 
     async delete(id: number) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.adminRepository) {
+            await this.initRepository();
+        }
 
         const admin = await this.adminRepository
             .createQueryBuilder()
@@ -65,7 +82,10 @@ class AdminService {
     }
 
     async getData(id: number) {
-
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.adminRepository) {
+            await this.initRepository();
+        }
 
         const admin = await this.adminRepository.findOne({ where: { id: id } });
 
@@ -74,7 +94,10 @@ class AdminService {
     }
 
     async list() {
-
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.adminRepository) {
+            await this.initRepository();
+        }
         const admins = await this.adminRepository.find();
 
         return admins;
@@ -92,6 +115,11 @@ class AdminService {
         phoneNumber?: string,
         address?: string
     }) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.adminRepository) {
+            await this.initRepository();
+        }
+
         if (!Object.values(searchParams).some(param => param !== undefined)) {
             throw new Error("Por favor rellene al menos un campo de búsqueda");
         }
@@ -114,6 +142,10 @@ class AdminService {
     }
 
     async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IAdminCreate) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.adminRepository) {
+            await this.initRepository();
+        }
 
         const admin = await this.adminRepository
             .createQueryBuilder()
@@ -128,6 +160,10 @@ class AdminService {
     }
 
     async getAdminLogin(email, reqPassword) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.adminRepository) {
+            await this.initRepository();
+        }
 
         const admin = await this.adminRepository.findOne({ where: { email: email } });
 
@@ -143,4 +179,8 @@ class AdminService {
 }
 
 export { AdminService };
-export const adminService = new AdminService();
+export const createAdminService = async () => {
+    const service = new AdminService();
+    await service.initRepository();
+    return service;
+};

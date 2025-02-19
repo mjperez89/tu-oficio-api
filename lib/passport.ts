@@ -1,9 +1,9 @@
 import passport from "passport"
 import * as passportLocal from 'passport-local';
 const LocalStrategy = passportLocal.Strategy;
-import {UserService} from "../services/UserService"
-import {helpers} from"./helpers"
-import {User} from "../entities/User"
+// import {UserService} from "../services/UserService"
+import * as helpers from"./helpers"
+// import {User} from "../entities/User"
 
 
 // Busqueda de usuario

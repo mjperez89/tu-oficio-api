@@ -1,8 +1,7 @@
 import { Client } from "../entities/Client";
-import { AppDataSource } from "../index"
+import { getRepository } from "../database"
 import { RolesEnum } from "../entities/RolesEnum";
-import { helpers } from "../../lib/helpers"
-import * as bcrypt from "bcrypt";
+import * as helpers from "../../lib/helpers"
 
 interface IClientCreate {
     id?: number;
@@ -19,43 +18,73 @@ interface IClientCreate {
 }
 
 class ClientService {
+    private clientRepository;
+    // clientRepository = getConnection().getRepository(Client)
 
-    clientRepository = AppDataSource.getRepository(Client)
+    constructor() {
+        this.initRepository();
+    }
+
+    async initRepository(){
+        this.clientRepository = await getRepository<Client>(Client);
+    };
 
     async create({ firstName, lastName, phoneNumber, email, address, birthDate, dni, password }: IClientCreate) {
+        try {
+            // esperamos hasta que el repositorio esté inicializado
+            if (!this.clientRepository) {
+                await this.initRepository();
+            }
 
-        //hasheamos el password
-        const hashedPassword = await helpers.encryptPassword(password);
+            if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password) {
+                throw new Error("Por favor complete todos los datos.");
+            }
 
-        if (!firstName || !lastName || !phoneNumber || !email || !address || !birthDate || !dni || !password) {
-            throw new Error("Por favor complete todos los datos.");
+            const clientAlreadyExists = await this.clientRepository.findOne({ where: { dni: dni } });
+            if (clientAlreadyExists) {
+                throw new Error("Cliente ya existe.");
+            }
+
+            const emailAlreadyExists = await this.clientRepository.findOne({ where: { email: email } });
+            if (emailAlreadyExists) {
+                throw new Error("Email ya existe.");
+            }
+
+            const age = helpers.calculateAge(birthDate);
+            const userName = helpers.generateRandomUsername(firstName, lastName);
+            const hashedPassword = await helpers.encryptPassword(password);
+
+            if (!hashedPassword) {
+                throw new Error("Error al encriptar la contraseña");
+            }
+
+            const client = new Client(
+                firstName,
+                lastName,
+                age.toString(),
+                phoneNumber,
+                email,
+                address,
+                birthDate,
+                dni,
+                userName,
+                hashedPassword,
+                RolesEnum.CLIENT
+            );
+
+            await this.clientRepository.save(client);
+            return client;
+        } catch (error) {
+            throw error;
         }
-
-        const clientAlreadyExists = await this.clientRepository.findOne({ where: { dni: dni } });
-
-        if (clientAlreadyExists) {
-            throw new Error("Cliente ya existe.");
-        }
-
-        const emailAlreadyExists = await this.clientRepository.findOne({ where: { email: email } });
-
-        if (emailAlreadyExists) {
-            throw new Error("Email ya existe.");
-        }
-
-        const age = calculateAge(birthDate)
-
-        const userName = generateRandomUsername(firstName, lastName);
-
-        const client = new Client(firstName, lastName, age.toString(), phoneNumber, email, address, birthDate, dni, userName, hashedPassword, RolesEnum.CLIENT)
-
-        await this.clientRepository.save(client);
-
-        return client;
     }
 
 
     async delete(id: number) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.clientRepository) {
+            await this.initRepository();
+        }
 
         const client = await this.clientRepository
             .createQueryBuilder()
@@ -73,7 +102,11 @@ class ClientService {
     }
 
     async getData(email: string) {
-
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.clientRepository) {
+            await this.initRepository();
+        }
+        
         const client = await this.clientRepository.findOne({ where: { email: email } });
         client.password = "****"
         return client;
@@ -81,6 +114,10 @@ class ClientService {
     }
 
     async list() {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.clientRepository) {
+            await this.initRepository();
+        }
 
         const clients = await this.clientRepository.find();
 
@@ -99,6 +136,11 @@ class ClientService {
         phoneNumber?: string,
         address?: string
     }) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.clientRepository) {
+            await this.initRepository();
+        }
+
         if (!Object.values(searchParams).some(param => param !== undefined)) {
             throw new Error("Por favor rellene al menos un campo de búsqueda");
         }
@@ -122,6 +164,10 @@ class ClientService {
     }
 
     async update({ id, firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password }: IClientCreate) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.clientRepository) {
+            await this.initRepository();
+        }
 
         const client = await this.clientRepository
             .createQueryBuilder()
@@ -147,48 +193,11 @@ class ClientService {
         return client;
     }
 }
-function generateRandomUsername(firstName: string, lastName: string): string {
-    const randomUsername = `${firstName[0]}${lastName[0]}_${Math.floor(Math.random() * 10000)}`;
-    return randomUsername;
-}
-
-function isValidDate(day: number, month: number, year: number): boolean {
-    const date = new Date(year, month - 1, day);
-    return (
-        date.getFullYear() === year &&
-        date.getMonth() === month - 1 &&
-        date.getDate() === day
-    );
-}
-
-function calculateAge(birthdate: string): number | null {
-    const [day, month, year] = birthdate.split('/').map(Number);
-
-    if (!isValidDate(day, month, year)) {
-        console.error('Formato de fecha inválido');
-        return null;
-    }
-
-    const birthDate = new Date(year, month - 1, day);
-    const currentDate = new Date();
-
-    if (currentDate > birthDate) {
-        console.error('Ingresó una fecha futura');
-        return null;
-    }
-
-    let age = currentDate.getFullYear() - birthDate.getFullYear();
-    // validamos que el cumpleaños no pasó aún. Sino, restamos un año
-    const hasBirthdayOccurred =
-        currentDate.getMonth() > birthDate.getMonth() ||
-        (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() >= birthDate.getDate());
-
-    if (!hasBirthdayOccurred) {
-        age--;
-    }
-
-    return age;
-}
 
 export { ClientService };
-export const clientService = new ClientService();
+// export const clientService = new ClientService();
+export const createAdminService = async () => {
+    const service = new ClientService();
+    await service.initRepository();
+    return service;
+};

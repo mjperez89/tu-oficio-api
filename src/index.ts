@@ -1,10 +1,7 @@
 import express = require("express");
-import bodyParser = require("body-parser")
-import { AppDataSource } from "./data-source"
-import { Admin } from "./entities/Admin"
-import { Professional } from "./entities/Professional"
-import { RolesEnum } from "./entities/RolesEnum"
-import { adminRoutes } from "./routes/AdminRoutes"
+import bodyParser = require("body-parser");
+import { connectDatabase, disconnectDatabase } from "./database";
+import { adminRoutes } from "./routes/AdminRoutes";
 import { professionalRoutes } from "./routes/ProfessionalRoutes";
 import { clientRoutes } from "./routes/ClientRoutes";
 
@@ -17,66 +14,40 @@ const corsOptions = {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204,
-  };
+};
 
-app.use(cors(corsOptions));
-app.use(bodyParser.json());
-app.use(adminRoutes);
-app.use(professionalRoutes);
-app.use(clientRoutes)
+// Inicializamos conexión a DB
+// const dbService = DatabaseService.getInstance();
 
-app.listen(port, () => {
-  console.log(`Aplicación escuchando en el puerto ${port}`);
-});
+async function startServer() {
+    try {
+        await connectDatabase();
+        console.log('Database connected, getConnection should work now.');
 
-AppDataSource.initialize().then(async () => {
-    /*console.log("Inserting a new admin into the database...")
-    const admin = new Admin(
-        "Martin",
-        "Perez",
-        "34",
-        "2615153207",
-        "jonathanmartinperez1989@gmail.com",
-        "Coquimbito, Maipu",
-        "1989-01-17",
-        "34256729",
-        "jmperez",
-        "test",
-        RolesEnum.ADMIN
-    );
-    await AppDataSource.manager.save(admin)
-    console.log("Saved a new admin with id: " + admin.id)
+        // primero conectamos DB, luego instanciamos servicios
+        app.use(cors(corsOptions));
+        app.use(bodyParser.json());
+        app.use(adminRoutes);
+        app.use(professionalRoutes);
+        app.use(clientRoutes);
+        
+        app.listen(port, () => {
+            console.log(`Aplicación escuchando en puerto ${port}`);
+        });
 
-    console.log("Loading users from the database...")
-    const admins = await AppDataSource.manager.find(Admin)
-    console.log("Loaded admins: ", admin)
-    
-    console.log("Inserting a new professional into the database...")
-    const professional = new Professional(
-        "Juan Pablo",
-        "Avila",
-        "42",
-        "2616373600",
-        "avilajuanp@gmail.com",
-        "Godoy Cruz, Mendoza",
-        "1981-02-16",
-        "28627255",
-        "avilajuanp",
-        "test",
-        RolesEnum.PROFESSIONAL,
-        "340027",
-        "electricista",
-        "15"        
-    );
-    await AppDataSource.manager.save(professional)
-    console.log("Saved a new professional with id: " + professional.id)
+        // Graceful shutdown!
+        process.on('SIGTERM', async () => {
+            console.log('señal SIGTERM recibida. Cerrando server HTTP y conexión a DB');
+            await disconnectDatabase();
+            process.exit(0);
+        });
 
-    console.log("Loading professional from the database...")
-    const professionals = await AppDataSource.manager.find(Professional)
-    console.log("Loaded professionals: ", professionals)
+    } catch (error) {
+        console.error('Error conectando al server:', error);
+        process.exit(1);
+    }
+}
 
-    /*console.log("Here you can setup and run express / fastify / any other framework.") */
+startServer();
 
-}).catch(error => console.log(error))
-
-export {AppDataSource}
+// export const getConnection = () => dbService.getConnection();

@@ -19,9 +19,9 @@ class ClientController {
 
     async handleCreateClient(request: Request, response: Response) {
         const { firstName, lastName, email, address, phoneNumber, birthDate, dni, password } = request.body;
-        console.log(request.body)
+        console.log(request.body);
         try {
-            await this.clientService.create({
+            const newClient = await this.clientService.create({
                 firstName,
                 lastName,
                 phoneNumber,
@@ -31,14 +31,22 @@ class ClientController {
                 dni,
                 password
             });
-            response.status(201).json({ message: 'Registro exitoso' })
-            console.log("Cliente registrado con éxito.")
-
+            
+            response.status(201).json({ 
+                message: 'Registro exitoso',
+                client: {
+                    id: newClient.id,
+                    email: newClient.email,
+                    firstName: newClient.firstName,
+                    lastName: newClient.lastName
+                }
+            });
         } catch (err) {
-            console.log(err.toString())
-            response.status(400).json({ message: err.toString() })
+            console.error("Error creating client:", err);
+            response.status(400).json({ 
+                message: err.message || 'Error al crear el cliente'
+            });
         }
-
     }
 
     async handleDeleteClient(request: Request, response: Response) {
