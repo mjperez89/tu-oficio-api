@@ -1,6 +1,7 @@
 import { Professional } from "../entities/Professional";
 import { getRepository } from "../database";
 import { RolesEnum } from "../entities/RolesEnum";
+import * as helpers from "../../lib/helpers"
 
 interface IProfessionalCreate {
     id?: number;
@@ -27,7 +28,7 @@ class ProfessionalService {
         this.initRepository();
     }
 
-    async initRepository(){
+    async initRepository() {
         this.professionalRepository = await getRepository<Professional>(Professional);
     };
 
@@ -52,16 +53,33 @@ class ProfessionalService {
         if (emailAlreadyExists) {
             throw new Error("Email ya existe.");
         }
-        const age = calculateAge(birthDate)
-        const userName = generateRandomUsername(firstName, lastName);
-        const yearsOfExperience = "0"
+        const age = helpers.calculateAge(birthDate);
+        const userName = helpers.generateRandomUsername(firstName, lastName);
+        const yearsOfExperience = "0";
+        const hashedPassword = await helpers.encryptPassword(password);
+
+        if (!hashedPassword) {
+            throw new Error("Error al encriptar la contraseña");
+        }
 
         const professional = new Professional(
-            firstName, lastName, age.toString(), phoneNumber, email, address, birthDate, dni, userName, password,
-            RolesEnum.PROFESSIONAL, registrationNumber, specialty, yearsOfExperience);
+            firstName,
+            lastName,
+            age.toString(),
+            phoneNumber,
+            email,
+            address,
+            birthDate,
+            dni,
+            userName,
+            hashedPassword,
+            RolesEnum.PROFESSIONAL,
+            registrationNumber,
+            specialty,
+            yearsOfExperience
+        );
 
         await this.professionalRepository.save(professional);
-
         return professional;
     }
 
@@ -117,7 +135,7 @@ class ProfessionalService {
         birthDate?: String,
         dni?: String,
         userName?: String,
-        password?: String,
+        // password?: String,
         registrationNumber?: String,
         specialty?: String,
         yearsOfExperience?: String
@@ -138,7 +156,7 @@ class ProfessionalService {
             .orWhere("dni like :dni", { dni: `%${searchParams.dni}%` })
             .orWhere("email like :email", { email: `%${searchParams.email}%` })
             .orWhere("userName like :userName", { userName: `%${searchParams.userName}%` })
-            .orWhere("password like :password", { password: `%${searchParams.password}%` })
+            // .orWhere("password like :password", { password: `%${searchParams.password}%` })
             .orWhere("phoneNumber like :phoneNumber", { phoneNumber: `%${searchParams.phoneNumber}%` })
             .orWhere("address like :address", { address: `%${searchParams.address}%` })
             .getMany();
@@ -168,40 +186,25 @@ class ProfessionalService {
             throw new Error("No se encontro admin")
         }
     }
-    async getProfessionalLogin(email, reqPassword) {
+    async getProfessionalLogin(email: string, reqPassword: string) {
         // esperamos hasta que el repositorio esté inicializado
         if (!this.professionalRepository) {
             await this.initRepository();
         }
 
         const professional = await this.professionalRepository.findOne({ where: { email: email } });
-
-        console.log(professional.firstName)
-        const password = professional.password
-        if (reqPassword != password) {
+        console.log(professional)
+        
+        // if (reqPassword != password) {
+        if (!helpers.matchPassword(reqPassword, professional.password)) {
             throw new Error("Constraseña incorrecta")
         }
-
         return professional;
     }
 }
-function generateRandomUsername(firstName: string, lastName: string): string {
-    const randomUsername = `${firstName[0]}${lastName[0]}_${Math.floor(Math.random() * 10000)}`;
-    return randomUsername;
-}
-
-function calculateAge(birthDate: string) {
-    const birthDateObj = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birthDateObj.getFullYear();
-    if (today.getMonth() < birthDateObj.getMonth() || (today.getMonth() === birthDateObj.getMonth() && today.getDate() < birthDateObj.getDate())) {
-        age--;
-    }
-    return age
-}
 
 export { ProfessionalService };
-// export const professionalService = new ProfessionalService();
+// export const professionalService = new ProfessionalService();717
 export const createAdminService = async () => {
     const service = new ProfessionalService();
     await service.initRepository();

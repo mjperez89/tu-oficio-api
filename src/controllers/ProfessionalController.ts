@@ -154,7 +154,7 @@ class ProfessionalController {
         try {
             const { email, password } = request.body;
 
-            const professional = await this.professionalService.getProfessionalLogin(email,password);
+            const professional = await this.professionalService.getProfessionalLogin(email, password);
 
             response.status(200).json({ message: 'Inicio de sesión exitoso' })
 

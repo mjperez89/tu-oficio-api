@@ -184,10 +184,10 @@ class ClientService {
     async getClientLogin(email, reqPassword) {
 
         const client = await this.clientRepository.findOne({ where: { email: email } });
-
-        console.log(client.firstName)
-        const password = client.password
-        if (reqPassword != password) {
+        console.log(client)
+        
+        //if (reqPassword != password) {
+        if (!helpers.matchPassword(reqPassword, client.password)) {
             throw new Error("Constraseña incorrecta")
         }
         return client;
