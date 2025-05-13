@@ -194,11 +194,26 @@ class ProfessionalService {
 
         const professional = await this.professionalRepository.findOne({ where: { email: email } });
         console.log(professional)
-        
+
         // if (reqPassword != password) {
         if (!helpers.matchPassword(reqPassword, professional.password)) {
             throw new Error("Constraseña incorrecta")
         }
+        return professional;
+    }
+
+    async getById(id: number) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.professionalRepository) {
+            await this.initRepository();
+        }
+
+        const professional = await this.professionalRepository.findOne({ where: { id: id } });
+
+        if (!professional) {
+            throw new Error(`No se encontró ningún profesional con el ID ${id}`);
+        }
+
         return professional;
     }
 }

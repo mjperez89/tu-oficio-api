@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AdminService } from "../services/AdminService";
 import { error } from "console";
+import { enhanceWithGeocoordinates, enhanceEntitiesWithGeocoordinates } from "../utils/GeocodingUtils";
 
 class AdminController {
     //instanciamos adminService global para todos los métodos
@@ -65,7 +66,10 @@ class AdminController {
 
             const admin = await this.adminService.getData(id);
 
-            response.status(200).json(admin)
+            // Add geocoordinates to the admin
+            const enhancedAdmin = await enhanceWithGeocoordinates(admin);
+
+            response.status(200).json(enhancedAdmin)
 
         }
         catch (error) {
@@ -78,7 +82,10 @@ class AdminController {
         try {
             const admins = await this.adminService.list();
 
-            response.status(200).json(admins)
+            // Add geocoordinates to all admins
+            const enhancedAdmins = await enhanceEntitiesWithGeocoordinates(admins);
+
+            response.status(200).json(enhancedAdmins)
         } catch (error) {
             response.status(404).send(error.toString())
         }
@@ -98,7 +105,11 @@ class AdminController {
 
         try {
             const admins = await this.adminService.search(searchParams);
-            response.status(200).json(admins)
+
+            // Add geocoordinates to all admins
+            const enhancedAdmins = await enhanceEntitiesWithGeocoordinates(admins);
+
+            response.status(200).json(enhancedAdmins)
         } catch (error) {
             response.status(400).send(error.toString())
         }
@@ -129,7 +140,7 @@ class AdminController {
         }
 
     }
-    
+
     async handleLoginAdmin(request: Request, response: Response) {
         console.log(request.body)
         try {

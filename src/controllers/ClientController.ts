@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ClientService } from "../services/ClientService";
 import { error } from "console";
+import { enhanceWithGeocoordinates, enhanceEntitiesWithGeocoordinates } from "../utils/GeocodingUtils";
 
 class ClientController {
     //instanciamos clientService global para todos los métodos
@@ -31,7 +32,7 @@ class ClientController {
                 dni,
                 password
             });
-            
+
             response.status(201).json({ 
                 message: 'Registro exitoso',
                 client: {
@@ -67,9 +68,12 @@ class ClientController {
             const email = request.query.email.toString();
             console.log(email);
 
-            const admin = await this.clientService.getData(email);
+            const client = await this.clientService.getData(email);
 
-            response.status(200).json(admin)
+            // Add geocoordinates to the client
+            const enhancedClient = await enhanceWithGeocoordinates(client);
+
+            response.status(200).json(enhancedClient)
 
         }
         catch (error) {
@@ -80,9 +84,12 @@ class ClientController {
     async handleListClients(request: Request, response: Response) {
 
         try {
-            const admins = await this.clientService.list();
+            const clients = await this.clientService.list();
 
-            response.status(200).json(admins)
+            // Add geocoordinates to all clients
+            const enhancedClients = await enhanceEntitiesWithGeocoordinates(clients);
+
+            response.status(200).json(enhancedClients)
         } catch (error) {
             response.status(404).send(error.toString())
         }
@@ -103,7 +110,11 @@ class ClientController {
 
         try {
             const clients = await this.clientService.search(searchParams);
-            response.status(200).json(clients)
+
+            // Add geocoordinates to all clients
+            const enhancedClients = await enhanceEntitiesWithGeocoordinates(clients);
+
+            response.status(200).json(enhancedClients)
         } catch (error) {
             response.status(400).send(error.toString())
         }

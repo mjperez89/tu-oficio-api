@@ -12,8 +12,9 @@ professionalRoutes.get("/list-professionals", professionalController.handleListP
     // response.render("professional/addprofessional")});
 professionalRoutes.post("/add-professional", professionalController.handleCreateProfessional);
 professionalRoutes.get("/searchProfessional", professionalController.handleSearchProfessional);
-professionalRoutes.post("/edit-professional", professionalController.handleUpdateProfessional);
+professionalRoutes.put("/edit-professional/:id", professionalController.handleUpdateProfessional);
 professionalRoutes.get("/get-professional", professionalController.handleGetProfessionalData);
+professionalRoutes.get("/professional/:id", professionalController.handleGetProfessionalById);
 professionalRoutes.post("/delete-professional", professionalController.handleDeleteProfessional);
 
 export { professionalRoutes };

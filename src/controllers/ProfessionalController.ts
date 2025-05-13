@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ProfessionalService } from "../services/ProfessionalService";
+import { enhanceWithGeocoordinates, enhanceEntitiesWithGeocoordinates } from "../utils/GeocodingUtils";
 
 class ProfessionalController {
     //instanciamos professionalService global para todos los métodos
@@ -14,6 +15,7 @@ class ProfessionalController {
         this.handleListProfessionals = this.handleListProfessionals.bind(this);
         this.handleSearchProfessional = this.handleSearchProfessional.bind(this);
         this.handleUpdateProfessional = this.handleUpdateProfessional.bind(this);
+        this.handleGetProfessionalById = this.handleGetProfessionalById.bind(this);
     }
 
     async handleCreateProfessional(request: Request, response: Response) {
@@ -64,7 +66,10 @@ class ProfessionalController {
 
             const professional = await this.professionalService.getData(email);
 
-            response.status(200).json(professional)
+            // Add geocoordinates to the professional
+            const enhancedProfessional = await enhanceWithGeocoordinates(professional);
+
+            response.status(200).json(enhancedProfessional)
         }
         catch (error) {
             response.status(400).send(error)
@@ -75,7 +80,10 @@ class ProfessionalController {
         try {
             const professionals = await this.professionalService.list();
 
-            response.status(200).json(professionals)
+            // Add geocoordinates to all professionals
+            const enhancedProfessionals = await enhanceEntitiesWithGeocoordinates(professionals);
+
+            response.status(200).json(enhancedProfessionals)
         } catch (error) {
             response.status(404).send(error.toString())
         }
@@ -112,7 +120,11 @@ class ProfessionalController {
 
         try {
             const professionals = await this.professionalService.search(searchParams);
-            response.status(200).json(professionals)
+
+            // Add geocoordinates to all professionals
+            const enhancedProfessionals = await enhanceEntitiesWithGeocoordinates(professionals);
+
+            response.status(200).json(enhancedProfessionals)
         } catch (error) {
             response.status(400).send(error.toString())
         }
@@ -120,9 +132,13 @@ class ProfessionalController {
     async handleUpdateProfessional(request: Request, response: Response) {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password, registrationNumber, specialty, yearsOfExperience } = request.body;
 
-        const requestId = request.query.id.toString();
-        console.log(requestId);
-        const id = parseInt(requestId, 10);
+        // const requestId = request.params.id.toString();
+        // console.log(requestId);
+        const id = parseInt(request.params.id, 10);
+
+        if (isNaN(id)) {
+            return response.status(400).send("ID inválido");
+        }
 
         try {
             const professional = await this.professionalService.update({
@@ -162,6 +178,26 @@ class ProfessionalController {
         catch (error) {
             console.log(error)
             response.status(401).json({ message: 'Credenciales incorrectas' });
+        }
+    }
+
+    async handleGetProfessionalById(request: Request, response: Response) {
+        try {
+            const id = parseInt(request.params.id, 10);
+
+            if (isNaN(id)) {
+                return response.status(400).json({ message: 'ID inválido' });
+            }
+
+            const professional = await this.professionalService.getById(id);
+
+            // Add geocoordinates to the professional
+            const enhancedProfessional = await enhanceWithGeocoordinates(professional);
+
+            response.status(200).json(enhancedProfessional);
+        } catch (error) {
+            console.log(error);
+            response.status(404).json({ message: error.toString() });
         }
     }
 }
