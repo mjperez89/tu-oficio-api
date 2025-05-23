@@ -16,6 +16,7 @@ class ClientController {
         this.handleListClients = this.handleListClients.bind(this);
         this.handleSearchClient = this.handleSearchClient.bind(this);
         this.handleUpdateClient = this.handleUpdateClient.bind(this);
+        this.handleGetClientById = this.handleGetClientById.bind(this);
     }
 
     async handleCreateClient(request: Request, response: Response) {
@@ -122,11 +123,14 @@ class ClientController {
     async handleUpdateClient(request: Request, response: Response) {
         const { firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, password } = request.body;
 
-        const requestId = request.query.id.toString();
-        console.log(requestId);
-        const id = parseInt(requestId, 10);
+        const id = parseInt(request.params.id, 10);
+
+        if (isNaN(id)) {
+            return response.status(400).send("ID inválido");
+        }
+
         try {
-            const admin = await this.clientService.update({
+            await this.clientService.update({
                 id,
                 firstName,
                 lastName,
@@ -139,25 +143,42 @@ class ClientController {
                 userName,
                 password
             });
-            response.status(200).send("Cliente con id " + id.toString() + " actualizado con exito")
+            response.status(200).send("Cliente con id " + id.toString() + " actualizado con éxito");
         } catch (err) {
             response.status(400).send(err.toString());
         }
-
     }
     async handleLoginClient(request: Request, response: Response) {
         console.log(request.body)
         try {
             const { email, password } = request.body;
-
-            const client = await this.clientService.getClientLogin(email, password);
-
+            await this.clientService.getClientLogin(email, password);
             response.status(200).json({ message: 'Inicio de sesión exitoso' })
 
         }
         catch (error) {
             console.log(error)
             response.status(401).json({ message: 'Credenciales incorrectas' });
+        }
+    }
+
+    async handleGetClientById(request: Request, response: Response) {
+        try {
+            const id = parseInt(request.params.id, 10);
+
+            if (isNaN(id)) {
+                return response.status(400).json({ message: 'ID inválido' });
+            }
+
+            const client = await this.clientService.getById(id);
+
+            // Add geocoordinates to the client
+            const enhancedClient = await enhanceWithGeocoordinates(client);
+
+            response.status(200).json(enhancedClient);
+        } catch (error) {
+            console.log(error);
+            response.status(404).json({ message: error.toString() });
         }
     }
 }

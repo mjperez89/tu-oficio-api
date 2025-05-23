@@ -1,6 +1,6 @@
-import { Client } from "../entities/Client";
-import { getRepository } from "../database"
-import { RolesEnum } from "../entities/RolesEnum";
+import {Client} from "../entities/Client";
+import {getRepository} from "../database"
+import {RolesEnum} from "../entities/RolesEnum";
 import * as helpers from "../../lib/helpers"
 
 interface IClientCreate {
@@ -106,7 +106,7 @@ class ClientService {
         if (!this.clientRepository) {
             await this.initRepository();
         }
-        
+
         const client = await this.clientRepository.findOne({ where: { email: email } });
         client.password = "****"
         return client;
@@ -119,9 +119,7 @@ class ClientService {
             await this.initRepository();
         }
 
-        const clients = await this.clientRepository.find();
-
-        return clients;
+        return await this.clientRepository.find();
 
     }
 
@@ -185,11 +183,26 @@ class ClientService {
 
         const client = await this.clientRepository.findOne({ where: { email: email } });
         console.log(client)
-        
+
         //if (reqPassword != password) {
         if (!helpers.matchPassword(reqPassword, client.password)) {
             throw new Error("Constraseña incorrecta")
         }
+        return client;
+    }
+
+    async getById(id: number) {
+        // esperamos hasta que el repositorio esté inicializado
+        if (!this.clientRepository) {
+            await this.initRepository();
+        }
+
+        const client = await this.clientRepository.findOne({ where: { id: id } });
+
+        if (!client) {
+            throw new Error(`No se encontró ningún cliente con el ID ${id}`);
+        }
+
         return client;
     }
 }
