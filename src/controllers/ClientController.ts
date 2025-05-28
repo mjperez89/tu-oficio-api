@@ -152,9 +152,16 @@ class ClientController {
         console.log(request.body)
         try {
             const { email, password } = request.body;
-            await this.clientService.getClientLogin(email, password);
-            response.status(200).json({ message: 'Inicio de sesión exitoso' })
+            const client = await this.clientService.getClientLogin(email, password);
 
+            // Add geocoordinates to the client
+            const enhancedClient = await enhanceWithGeocoordinates(client);
+
+            response.status(200).json({
+                message: 'Inicio de sesión exitoso',
+                id: client.id,
+                coordinates: enhancedClient.coordinates
+            })
         }
         catch (error) {
             console.log(error)

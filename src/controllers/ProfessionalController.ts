@@ -141,7 +141,7 @@ class ProfessionalController {
         }
 
         try {
-            const professional = await this.professionalService.update({
+            await this.professionalService.update({
                 id,
                 firstName,
                 lastName,
@@ -151,7 +151,7 @@ class ProfessionalController {
                 address,
                 birthDate,
                 dni,
-                userName, 
+                userName,
                 password,
                 registrationNumber,
                 specialty,
@@ -172,7 +172,14 @@ class ProfessionalController {
 
             const professional = await this.professionalService.getProfessionalLogin(email, password);
 
-            response.status(200).json({ message: 'Inicio de sesión exitoso' })
+            // Add geocoordinates to the professional
+            const enhancedProfessional = await enhanceWithGeocoordinates(professional);
+
+            response.status(200).json({
+                message: 'Inicio de sesión exitoso',
+                id: professional.id,
+                coordinates: enhancedProfessional.coordinates
+            })
 
         }
         catch (error) {
