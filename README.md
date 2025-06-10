@@ -11,11 +11,13 @@
 # Instalar Express = npm install express --save
 
 
+# Para correr la migracion = npx typeorm-ts-node-commonjs migration:run -d ./src/data-source.ts
 
 -----------------------------------------------------------------------
 
 # Cuando clonamos el repo debemos instalar npm, mediante = npm install
 
+# Para correr el proyecto = npm start
 
 
 
