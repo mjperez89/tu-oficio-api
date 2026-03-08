@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
-import { ProfesionsEnum } from "./ProfesionsEnum";
+import { Role } from "./Role"
 
 @Entity()
 export class User {
@@ -19,8 +19,11 @@ export class User {
     @Column({ type: "bigint" })
     phoneNumber: number
 
-    @Column()
+    @Column({ unique: true })
     email: string
+
+    @Column()
+    password: string
 
     @Column()
     address: string
@@ -28,27 +31,38 @@ export class User {
     @Column()
     birthDate: Date
 
-    @Column()
+    @Column({ unique: true })
     dni: number
 
     @Column()
     userName: string
 
-    @Column()
-    profesion: ProfesionsEnum;
+    @Column({ type: "varchar", default: Role.CLIENT })
+    role: Role
 
-    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, profesion: ProfesionsEnum) {
+    constructor(
+        firstName: string,
+        lastName: string,
+        age: number,
+        phoneNumber: number,
+        email: string,
+        password: string,
+        address: string,
+        birthDate: Date,
+        dni: number,
+        userName: string,
+        role: Role
+    ) {
         this.firstName = firstName
         this.lastName = lastName
         this.age = age
         this.phoneNumber = phoneNumber
         this.email = email
+        this.password = password
         this.address = address
         this.birthDate = birthDate
         this.dni = dni
         this.userName = userName
-        this.profesion = profesion
+        this.role = role
     }
-
-
 }
