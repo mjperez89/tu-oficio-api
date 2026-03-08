@@ -24,4 +24,6 @@ npm install
 | `npm run start:front` | Levanta solo el frontend |
 | `npm run build:back` | Buildea solo el backend |
 | `npm run build:front` | Buildea solo el frontend |
+| `npm run test:back` | Corre todos los tests del backend (unitarios + E2E) |
+| `npm run test:e2e` | Corre solo los tests E2E del backend |
 | `npm run test:front` | Corre los tests del frontend |
