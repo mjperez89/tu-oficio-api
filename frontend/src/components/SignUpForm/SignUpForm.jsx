@@ -20,6 +20,12 @@ const Card = styled.div`
   max-width: 480px;
 `;
 
+const Logo = styled.img`
+  display: block;
+  margin: 0 auto 1.5rem;
+  width: 160px;
+`;
+
 const Title = styled.h2`
   color: #0E2E50;
   text-align: center;
@@ -240,6 +246,7 @@ export const SignUpForm = () => {
   return (
     <Wrapper>
       <Card>
+        <Logo src="/img/tuoficio_logo.png" alt="Tu Oficio" />
         <Title>Crear cuenta</Title>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
