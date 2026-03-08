@@ -22,9 +22,8 @@ export const Hero = () => {
         <div className="title">
           <h1>Encontrá la Mejor solución de forma fácil</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere
-            natus, enim ipsam magnam odit deserunt itaque? Minima earum velit
-            tenetur!
+            Conectamos clientes con profesionales de confianza. Plomeros,
+            electricistas, albañiles y más, cerca tuyo y listos para ayudarte.
           </p>
         </div>
         <form className="search" onSubmit={handleSearch}>
@@ -94,6 +93,7 @@ const Section = styled.section`
         justify-content: center;
         flex-direction: column;
         padding: 0 1.5rem;
+        min-width: 220px;
         label {
           font-size: 1.1rem;
           color: #03045e;
@@ -103,6 +103,7 @@ const Section = styled.section`
           border: none;
           text-align: center;
           color: black;
+          width: 250px;
           &[type="date"] {
             padding-left: 3rem;
           }
