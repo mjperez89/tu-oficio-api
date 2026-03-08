@@ -4,7 +4,7 @@ import { User } from "../entities/User"
 import { Role } from "../entities/Role"
 import { authorize } from "../middleware/authorize"
 import { signToken } from "../utils/jwt"
-import { Like } from "typeorm"
+import { ILike } from "typeorm"
 
 const router = Router()
 
@@ -165,10 +165,10 @@ router.get("/search", async (req, res) => {
         const userRepository = AppDataSource.getRepository(User)
         const professionals = await userRepository.find({
             where: [
-                { role: Role.PROFESSIONAL, firstName: Like(`%${q}%`) },
-                { role: Role.PROFESSIONAL, lastName: Like(`%${q}%`) },
-                { role: Role.PROFESSIONAL, specialty: Like(`%${q}%`) },
-                { role: Role.PROFESSIONAL, address: Like(`%${q}%`) },
+                { role: Role.PROFESSIONAL, firstName: ILike(`%${q}%`) },
+                { role: Role.PROFESSIONAL, lastName: ILike(`%${q}%`) },
+                { role: Role.PROFESSIONAL, specialty: ILike(`%${q}%`) },
+                { role: Role.PROFESSIONAL, address: ILike(`%${q}%`) },
             ]
         })
 
