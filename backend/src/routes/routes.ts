@@ -113,7 +113,7 @@ router.post("/login-client", async (req, res) => {
         }
 
         const userRepository = AppDataSource.getRepository(User)
-        const user = await userRepository.findOne({ where: { email, role: Role.CLIENT } })
+        const user = await userRepository.findOne({ where: [{ email, role: Role.CLIENT }, { email, role: Role.ADMIN }] })
 
         if (!user) {
             return res.status(404).json({ message: "Cliente no encontrado." })
@@ -138,7 +138,7 @@ router.post("/login-professional", async (req, res) => {
         }
 
         const userRepository = AppDataSource.getRepository(User)
-        const user = await userRepository.findOne({ where: { email, role: Role.PROFESSIONAL } })
+        const user = await userRepository.findOne({ where: [{ email, role: Role.PROFESSIONAL }, { email, role: Role.ADMIN }] })
 
         if (!user) {
             return res.status(404).json({ message: "Profesional no encontrado." })
