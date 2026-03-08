@@ -40,6 +40,15 @@ export class User {
     @Column({ type: "varchar", default: Role.CLIENT })
     role: Role
 
+    @Column({ nullable: true })
+    specialty: string
+
+    @Column({ nullable: true })
+    yearsOfExperience: number
+
+    @Column({ nullable: true })
+    registrationNumber: number
+
     constructor(
         firstName: string,
         lastName: string,

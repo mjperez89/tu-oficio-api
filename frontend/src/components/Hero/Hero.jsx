@@ -1,6 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+
 export const Hero = () => {
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/searchResults?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
+
   return (
     <Section id="hero">
       <div className="background">
@@ -15,23 +27,19 @@ export const Hero = () => {
             tenetur!
           </p>
         </div>
-        <div className="search">
+        <form className="search" onSubmit={handleSearch}>
           <div className="container">
-            <label htmlFor=""></label>
-            <input type="text" placeholder="Ingresa tu busqueda" />
+            <label htmlFor="search"></label>
+            <input
+              id="search"
+              type="text"
+              placeholder="Ingresa tu busqueda"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
           </div>
-          {/* <div className="container">
-            <label htmlFor="">Check-in</label>
-            <input type="date" />
-          </div> */}
-          <div className="container">
-            <label htmlFor="   "></label>
-            <input type="text" placeholder="Ubicacion" />
-          </div>
-          <a href="/searchResults">
-          <button>Buscar</button>
-          </a>
-        </div>
+          <button type="submit">Buscar</button>
+        </form>
       </div>
     </Section>
   );

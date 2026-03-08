@@ -167,7 +167,7 @@ router.get("/search", async (req, res) => {
             where: [
                 { role: Role.PROFESSIONAL, firstName: Like(`%${q}%`) },
                 { role: Role.PROFESSIONAL, lastName: Like(`%${q}%`) },
-                { role: Role.PROFESSIONAL, email: Like(`%${q}%`) },
+                { role: Role.PROFESSIONAL, specialty: Like(`%${q}%`) },
                 { role: Role.PROFESSIONAL, address: Like(`%${q}%`) },
             ]
         })
