@@ -5,6 +5,7 @@
    "main": "index.js",
    "scripts": {
       "test": "jest --verbose",
+      "test:e2e": "jest --verbose --testPathPatterns=e2e",
       "build": "tsc",
       "start": "ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs"

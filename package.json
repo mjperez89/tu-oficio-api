@@ -15,6 +15,7 @@
     "build:back": "npm run build --workspace=backend",
     "build:front": "npm run build --workspace=frontend",
     "test:back": "npm run test --workspace=backend",
+    "test:e2e": "npm run test:e2e --workspace=backend",
     "test:front": "npm run test --workspace=frontend",
     "install:all": "npm install"
   },
