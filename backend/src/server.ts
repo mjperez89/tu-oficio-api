@@ -2,10 +2,12 @@ import * as express from "express"
 import * as cors from "cors"
 import * as path from "path"
 import { router } from "./routes/routes"
+import { authenticate } from "./middleware/authenticate"
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(authenticate)
 app.use(router)
 
 // Servir frontend buildeado en producción

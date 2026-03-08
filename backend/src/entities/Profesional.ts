@@ -1,24 +1,37 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
-import { User } from "./User";
-import { ProfesionsEnum } from "./ProfesionsEnum";
+import { Entity, Column } from "typeorm"
+import { User } from "./User"
+import { Role } from "./Role"
 
 @Entity()
 export class Profesional extends User {
 
-    @PrimaryGeneratedColumn()
-    id: number
-
-    @Column()
+    @Column({ nullable: true })
     registrationNumber: number
 
-    @Column()
+    @Column({ nullable: true })
     specialty: string
 
-    @Column()
+    @Column({ nullable: true })
     yearsOfExperience: number
 
-    constructor(firstName: string, lastName: string, age: number, phoneNumber: number, email: string, address: string, birthDate: Date, dni: number, userName: string, profesion: ProfesionsEnum) {
-        super(firstName, lastName, age, phoneNumber, email, address, birthDate, dni, userName, profesion)
+    constructor(
+        firstName: string,
+        lastName: string,
+        age: number,
+        phoneNumber: number,
+        email: string,
+        password: string,
+        address: string,
+        birthDate: Date,
+        dni: number,
+        userName: string,
+        registrationNumber: number,
+        specialty: string,
+        yearsOfExperience: number
+    ) {
+        super(firstName, lastName, age, phoneNumber, email, password, address, birthDate, dni, userName, Role.PROFESSIONAL)
+        this.registrationNumber = registrationNumber
+        this.specialty = specialty
+        this.yearsOfExperience = yearsOfExperience
     }
-    
 }
