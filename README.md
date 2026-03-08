@@ -27,3 +27,4 @@ npm install
 | `npm run test:back` | Corre todos los tests del backend (unitarios + E2E) |
 | `npm run test:e2e` | Corre solo los tests E2E del backend |
 | `npm run test:front` | Corre los tests del frontend |
+| `npm run seed` | Carga datos de prueba (10 clientes + 10 profesionales) |

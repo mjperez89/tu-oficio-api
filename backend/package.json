@@ -8,6 +8,7 @@
       "test:e2e": "jest --verbose --testPathPatterns=e2e",
       "build": "tsc",
       "start": "ts-node src/index.ts",
+      "seed": "ts-node src/seed.ts",
       "typeorm": "typeorm-ts-node-commonjs"
    },
    "keywords": [],
