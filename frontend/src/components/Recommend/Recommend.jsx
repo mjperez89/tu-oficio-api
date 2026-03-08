@@ -1,104 +1,140 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+
+const specialtyImages = {
+  Plomero: "/img/plomero.jpeg",
+  Electricista: "/img/electricista.jpeg",
+  Carpintero: "/img/oficio1.png",
+  Albanil: "/img/albanil.jpeg",
+  Jardinero: "/img/oficio1.png",
+  Gasista: "/img/gasista.jpeg",
+  Pintor: "/img/oficio1.png",
+  Cerrajero: "/img/cerrajero.jpeg",
+  Metalurgico: "/img/metalurgico.jpeg",
+  Mecanico: "/img/ferretero.jpeg",
+  default: "/img/avatarImage.jpg",
+};
+
+const packages = [
+  "Lo más popular",
+  "Los más recomendados",
+  "Según ubicación",
+  "Por especialidad",
+];
+
 export const Recommend = () => {
-  const data = [
-    {
-      image: "../img/cerrajero.jpeg",
-      title: "Cerrajero",
-      subTitle: "Soy un cerrajero experimentado que se especializa en solucionar problemas de cerrajería. Brindo servicios confiables de apertura, reparación y reemplazo de cerraduras para garantizar la seguridad de mis clientes",
-      cost: "$10000",
-      duration: "Calificacion",
-    },
-    {
-      image: "../img/plomero.jpeg",
-      title: "Plomero",
-      subTitle: "Soy un plomero con experiencia en instalación y reparación de fontanería, listo para solucionar tus problemas de agua y tuberías de manera eficiente.",
-      cost: "$54200",
-      duration: "Calificacion",
-    },
-    {
-      image: "../img/gasista.jpeg",
-      title: "Gasista",
-      subTitle: "Soy un gasista con experiencia en instalación y mantenimiento de sistemas de gas para tu tranquilidad y seguridad.",
-      cost: "$45500",
-      duration: "Calificacion",
-    },
-    {
-      image: "../img/electricista.jpeg",
-      title: "Electricista",
-      subTitle: "Soy un electricista experto en instalación y reparación de sistemas eléctricos para hogares y negocios, garantizando seguridad y eficiencia.",
-      cost: "$24100",
-      duration: "Calificacion",
-    },
-    {
-      image: "../img/metalurgico.jpeg",
-      title: "Metalurgico",
-      subTitle: "Soy un metalúrgico con experiencia en trabajar con metales para crear productos duraderos y de calidad.",
-      cost: "$95400",
-      duration: "Calificacion",
-    },
-    {
-      image: "../img/albañil.jpeg",
-      title: "Albañil",
-      subTitle: "Soy un albañil con experiencia en construcción y renovación, enfocado en crear estructuras sólidas y acabados de calidad",
-      cost: "$38800",
-      duration: "Calificacion",
-    },
-  ];
+  const navigate = useNavigate();
+  const [active, setActive] = useState(0);
+  const [professionals, setProfessionals] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const packages = [
-    "Lo mas popular",
-    "Los mas recomentados",
-    "Según ubicación ",
-    "Por precios",
-  ];
+  useEffect(() => {
+    loadTab(active);
+  }, [active]);
 
-  const [active, setActive] = useState(1);
+  const loadTab = async (tab) => {
+    setLoading(true);
+    try {
+      let results = [];
+
+      if (tab === 0) {
+        // Lo más popular: búsqueda amplia, shuffle
+        const res = await fetch("http://localhost:3000/search?q=a");
+        const data = await res.json();
+        results = (data.results || []).sort(() => Math.random() - 0.5).slice(0, 6);
+
+      } else if (tab === 1) {
+        // Los más recomendados: buscar todos y ordenar por yearsOfExperience como proxy
+        const res = await fetch("http://localhost:3000/search?q=a");
+        const data = await res.json();
+        results = (data.results || [])
+          .sort((a, b) => (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0))
+          .slice(0, 6);
+
+      } else if (tab === 2) {
+        // Según ubicación: buscar por Mendoza
+        const res = await fetch("http://localhost:3000/search?q=Mendoza");
+        const data = await res.json();
+        results = (data.results || []).slice(0, 6);
+
+      } else if (tab === 3) {
+        // Por especialidad: 1 de cada tipo
+        const specialties = ["Albanil", "Electricista", "Plomero", "Mecanico", "Cerrajero", "Gasista"];
+        for (const specialty of specialties) {
+          const res = await fetch(`http://localhost:3000/search?q=${specialty}`);
+          const data = await res.json();
+          if (data.results?.length > 0) results.push(data.results[0]);
+        }
+      }
+
+      setProfessionals(results);
+    } catch (err) {
+      console.error("Error cargando recomendados:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getImage = (pro) => specialtyImages[pro.specialty] || specialtyImages.default;
+
   return (
     <Section id="recommend">
       <div className="title">
         <h2>Lo más recomendado</h2>
       </div>
+
       <div className="packages">
         <ul>
-          {packages.map((pkg, index) => {
-            return (
-              <li
-                className={active === index + 1 ? "active" : ""}
-                onClick={() => setActive(index + 1)}
-              >
-                {pkg}
-              </li>
-            );
-          })}
+          {packages.map((pkg, index) => (
+            <li
+              key={index}
+              className={active === index ? "active" : ""}
+              onClick={() => setActive(index)}
+            >
+              {pkg}
+            </li>
+          ))}
         </ul>
       </div>
+
       <div className="destinations">
-        {data.map((destination) => {
-          return (
-            <div className="destination">
-              <img src={destination.image} alt="" />
-              <h3>{destination.title}</h3>
-              <p>{destination.subTitle}</p>
-              <div className="info">
-                <div className="services">
-                  <img src={"../img/info1.png"} alt="" />
-                  <img src={"../img/info2.png"} alt="" />
-                  <img src={"../img/info3.png"} alt="" />
-                </div>
-                <h4>{destination.cost}</h4>
+        {loading && <LoadingMsg>Cargando...</LoadingMsg>}
+
+        {!loading && professionals.map((pro) => (
+          <div
+            className="destination"
+            key={pro.id}
+            onClick={() => navigate(`/professional/${pro.id}`)}
+          >
+            <img src={getImage(pro)} alt={pro.specialty} />
+            <h3>{pro.firstName} {pro.lastName}</h3>
+            <p>{pro.specialty} · {pro.address}</p>
+            <div className="info">
+              <div className="services">
+                <img src={"/img/info1.png"} alt="" />
+                <img src={"/img/info2.png"} alt="" />
+                <img src={"/img/info3.png"} alt="" />
               </div>
-              <div className="distance">
-                <span>100 Puntos</span>
-                <span>{destination.duration}</span>
-              </div>
+              <h4>Ver perfil →</h4>
             </div>
-          );
-        })}
+            <div className="distance">
+              <span>⏱ {pro.yearsOfExperience || '-'} años exp.</span>
+              <span>📍 {pro.address?.split(',')[0]}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </Section>
   );
-}
+};
+
+const LoadingMsg = styled.p`
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+  grid-column: 1 / -1;
+`;
 
 const Section = styled.section`
   padding: 2rem 0;
@@ -116,9 +152,14 @@ const Section = styled.section`
       li {
         padding: 1rem 2rem;
         border-bottom: 0.1rem solid black;
+        cursor: pointer;
+        transition: 0.2s;
+        &:hover { color: #FF6922; }
       }
       .active {
-        border-bottom: 0.5rem solid #8338ec;
+        border-bottom: 0.5rem solid #FF6922;
+        color: #FF6922;
+        font-weight: 600;
       }
     }
   }
@@ -135,16 +176,23 @@ const Section = styled.section`
       background-color: #8338ec14;
       border-radius: 1rem;
       transition: 0.3s ease-in-out;
+      cursor: pointer;
       &:hover {
         transform: translateX(0.4rem) translateY(-1rem);
         box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
       }
       img {
         width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 0.5rem;
       }
+      h3 { color: #0E2E50; margin: 0; }
+      p { font-size: 0.9rem; color: #555; margin: 0; }
       .info {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         .services {
           display: flex;
           gap: 0.3rem;
@@ -152,30 +200,25 @@ const Section = styled.section`
             border-radius: 1rem;
             background-color: #4d2ddb84;
             width: 2rem;
-            /* padding: 1rem; */
+            height: auto;
             padding: 0.3rem 0.4rem;
           }
         }
-        display: flex;
-        justify-content: space-between;
+        h4 { color: #FF6922; font-size: 0.9rem; margin: 0; }
       }
       .distance {
         display: flex;
         justify-content: space-between;
+        font-size: 0.82rem;
+        color: #666;
       }
     }
   }
   @media screen and (min-width: 280px) and (max-width: 768px) {
     .packages {
       ul {
-        li {
-          padding: 0 0.5rem;
-          font-size: 2vh;
-          padding-bottom: 1rem;
-        }
-        .active {
-          border-bottom-width: 0.3rem;
-        }
+        li { padding: 0 0.5rem; font-size: 2vh; padding-bottom: 1rem; }
+        .active { border-bottom-width: 0.3rem; }
       }
     }
     .destinations {

@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { AppDataSource } from "../data-source"
 import { User } from "../entities/User"
+import { Review } from "../entities/Review"
 import { Role } from "../entities/Role"
 import { authorize } from "../middleware/authorize"
 import { signToken } from "../utils/jwt"
@@ -173,6 +174,61 @@ router.get("/search", async (req, res) => {
         })
 
         return res.json({ results: professionals })
+    } catch (error) {
+        return res.status(400).json({ message: error.message })
+    }
+})
+
+// Perfil público de un profesional por ID
+router.get("/professionals/:id", async (req, res) => {
+    try {
+        const userRepository = AppDataSource.getRepository(User)
+        const professional = await userRepository.findOne({
+            where: { id: Number(req.params.id), role: Role.PROFESSIONAL }
+        })
+        if (!professional) {
+            return res.status(404).json({ message: "Profesional no encontrado." })
+        }
+        return res.json({ professional })
+    } catch (error) {
+        return res.status(400).json({ message: error.message })
+    }
+})
+
+// Obtener últimas 3 reseñas de un profesional
+router.get("/professionals/:id/reviews", async (req, res) => {
+    try {
+        const reviewRepository = AppDataSource.getRepository(Review)
+        const reviews = await reviewRepository.find({
+            where: { professionalId: Number(req.params.id) },
+            order: { createdAt: "DESC" },
+            take: 3
+        })
+        return res.json({ reviews })
+    } catch (error) {
+        return res.status(400).json({ message: error.message })
+    }
+})
+
+// Crear una reseña para un profesional
+router.post("/professionals/:id/reviews", async (req, res) => {
+    try {
+        const { clientName, rating, comment } = req.body
+        if (!clientName || !rating || !comment) {
+            return res.status(400).json({ message: "Todos los campos son obligatorios." })
+        }
+        if (rating < 1 || rating > 5) {
+            return res.status(400).json({ message: "La calificación debe ser entre 1 y 5." })
+        }
+        const reviewRepository = AppDataSource.getRepository(Review)
+        const review = reviewRepository.create({
+            professionalId: Number(req.params.id),
+            clientName,
+            rating,
+            comment
+        })
+        await reviewRepository.save(review)
+        return res.status(201).json({ message: "Reseña enviada correctamente.", review })
     } catch (error) {
         return res.status(400).json({ message: error.message })
     }

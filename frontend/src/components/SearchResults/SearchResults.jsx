@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import { ScrollToTop } from '../ScrollToTop/ScrollToTop';
 import { Navbar } from '../Navbar/Navbar';
 import { Footer } from '../Footer/Footer';
+
+// Fix leaflet default icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 const specialtyImages = {
   Plomero: "/img/plomero.jpeg",
@@ -18,12 +29,32 @@ const specialtyImages = {
   default: "/img/avatarImage.jpg",
 };
 
+// Geocodifica una dirección usando Nominatim (OpenStreetMap, gratuito)
+const geocode = async (address) => {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address + ", Mendoza, Argentina")}&format=json&limit=1`,
+      { headers: { "Accept-Language": "es" } }
+    );
+    const data = await res.json();
+    if (data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    }
+  } catch (e) {}
+  return null;
+};
+
+// Centro por defecto: Mendoza, Argentina
+const MENDOZA_CENTER = [-32.8908, -68.8272];
+
 export const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [professionals, setProfessionals] = useState([]);
+  const [markers, setMarkers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [selectedPro, setSelectedPro] = useState(null);
   const query = searchParams.get('q') || '';
 
   useEffect(() => {
@@ -33,15 +64,28 @@ export const SearchResults = () => {
 
   const fetchResults = async (q) => {
     setLoading(true);
+    setMarkers([]);
     try {
       const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(q)}`);
       const data = await response.json();
-      setProfessionals(data.results || []);
+      const results = data.results || [];
+      setProfessionals(results);
+      geocodeAll(results);
     } catch (err) {
       console.error('Error al buscar:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const geocodeAll = async (pros) => {
+    const located = [];
+    for (const pro of pros) {
+      const coords = await geocode(pro.address);
+      if (coords) located.push({ ...pro, coords });
+      await new Promise(r => setTimeout(r, 300)); // Rate limit Nominatim
+    }
+    setMarkers(located);
   };
 
   const handleSearch = (e) => {
@@ -51,9 +95,11 @@ export const SearchResults = () => {
     }
   };
 
-  const getImage = (professional) => {
-    return specialtyImages[professional.specialty] || specialtyImages.default;
-  };
+  const getImage = (pro) => specialtyImages[pro.specialty] || specialtyImages.default;
+
+  const mapCenter = markers.length > 0
+    ? [markers[0].coords.lat, markers[0].coords.lng]
+    : MENDOZA_CENTER;
 
   return (
     <div>
@@ -61,7 +107,6 @@ export const SearchResults = () => {
       <Navbar />
 
       <Section>
-        {/* Barra de búsqueda */}
         <SearchBar onSubmit={handleSearch}>
           <SearchInput
             type="text"
@@ -88,7 +133,11 @@ export const SearchResults = () => {
             )}
 
             {!loading && professionals.map((pro) => (
-              <ProfessionalCard key={pro.id}>
+              <ProfessionalCard
+                key={pro.id}
+                $selected={selectedPro?.id === pro.id}
+                onClick={() => setSelectedPro(pro)}
+              >
                 <CardImage src={getImage(pro)} alt={pro.specialty} />
                 <CardBody>
                   <CardName>{pro.firstName} {pro.lastName}</CardName>
@@ -100,18 +149,79 @@ export const SearchResults = () => {
                     )}
                     <InfoItem>📞 {pro.phoneNumber}</InfoItem>
                   </CardInfo>
-                  <ContactButton href={`mailto:${pro.email}`}>
-                    Contactar
-                  </ContactButton>
+                  <CardActions>
+                    <ContactButton href={`mailto:${pro.email}`}>
+                      ✉️ Email
+                    </ContactButton>
+                    <ProfileButton href={`/professional/${pro.id}`}>
+                      👤 Ver perfil
+                    </ProfileButton>
+                  </CardActions>
                 </CardBody>
               </ProfessionalCard>
             ))}
           </ResultsList>
 
-          {/* Mapa */}
-          <MapContainer>
-            <MapImage src="/img/mapa.jpg" alt="Mapa de resultados" />
-          </MapContainer>
+          {/* Mapa Leaflet */}
+          <MapWrapper>
+            <MapContainer
+              center={mapCenter}
+              zoom={12}
+              style={{ width: "100%", height: "520px", borderRadius: "12px" }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {markers.map((pro) => (
+                <Marker
+                  key={pro.id}
+                  position={[pro.coords.lat, pro.coords.lng]}
+                >
+                  <Popup>
+                    <strong>{pro.firstName} {pro.lastName}</strong><br />
+                    {pro.specialty}<br />
+                    📍 {pro.address}<br />
+                    📞 {pro.phoneNumber}<br /><br />
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      <a
+                        href={`https://wa.me/54${pro.phoneNumber}?text=Hola%20${pro.firstName},%20te%20contacto%20desde%20TuOficio.com`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: "inline-block",
+                          backgroundColor: "#25D366",
+                          color: "#fff",
+                          padding: "6px 12px",
+                          borderRadius: "6px",
+                          textDecoration: "none",
+                          fontWeight: "bold",
+                          fontSize: "13px"
+                        }}
+                      >
+                        💬 WhatsApp
+                      </a>
+                      <a
+                        href={`/professional/${pro.id}`}
+                        style={{
+                          display: "inline-block",
+                          backgroundColor: "#0E2E50",
+                          color: "#fff",
+                          padding: "6px 12px",
+                          borderRadius: "6px",
+                          textDecoration: "none",
+                          fontWeight: "bold",
+                          fontSize: "13px"
+                        }}
+                      >
+                        👤 Ver perfil
+                      </a>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </MapWrapper>
         </Content>
       </Section>
 
@@ -138,7 +248,6 @@ const SearchInput = styled.input`
   border: 1.5px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
-
   &:focus {
     outline: none;
     border-color: #FF6922;
@@ -155,10 +264,7 @@ const SearchButton = styled.button`
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #e55a10;
-  }
+  &:hover { background-color: #e55a10; }
 `;
 
 const ResultsTitle = styled.h2`
@@ -171,10 +277,7 @@ const Content = styled.div`
   display: flex;
   gap: 2rem;
   align-items: flex-start;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-  }
+  @media (max-width: 768px) { flex-direction: column; }
 `;
 
 const ResultsList = styled.div`
@@ -182,10 +285,7 @@ const ResultsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+  @media (max-width: 768px) { width: 100%; }
 `;
 
 const StatusMessage = styled.p`
@@ -201,9 +301,9 @@ const ProfessionalCard = styled.div`
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   padding: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
-
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid ${({ $selected }) => $selected ? '#FF6922' : 'transparent'};
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(0,0,0,0.12);
@@ -253,39 +353,44 @@ const InfoItem = styled.span`
   color: #555;
 `;
 
-const ContactButton = styled.a`
+const CardActions = styled.div`
+  display: flex;
+  gap: 0.5rem;
   margin-top: 0.5rem;
-  align-self: flex-start;
-  background-color: #0E2E50;
-  color: #fff;
-  padding: 0.4rem 1rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  text-decoration: none;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #48cae4;
-  }
+  flex-wrap: wrap;
 `;
 
-const MapContainer = styled.div`
+const ContactButton = styled.a`
+  background-color: #0E2E50;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  &:hover { background-color: #48cae4; }
+`;
+
+const ProfileButton = styled.a`
+  background-color: #FF6922;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  &:hover { background-color: #e55a10; }
+`;
+
+const MapWrapper = styled.div`
   flex: 1;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
   position: sticky;
   top: 1rem;
-
   @media (max-width: 768px) {
     width: 100%;
     position: static;
   }
-`;
-
-const MapImage = styled.img`
-  width: 100%;
-  height: 520px;
-  object-fit: cover;
-  display: block;
 `;
