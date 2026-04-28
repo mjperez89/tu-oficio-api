@@ -121,8 +121,7 @@ const professionals = [
     { firstName: "Luis",      lastName: "Valenzuela",age: 52, phoneNumber: 2614700010, email: "lvalenzuela@test.com",password: "prof123", address: "Tunuyan, Mendoza",    birthDate: new Date("1973-03-12"), dni: 25000070, userName: "lvalenzuela",specialty: "Gasista", yearsOfExperience: 27, registrationNumber: 70010 },
 ]
 
-async function seed() {
-    await AppDataSource.initialize()
+export async function seed() {
     const userRepository = AppDataSource.getRepository(User)
     const reviewRepository = AppDataSource.getRepository(Review)
 
@@ -167,10 +166,4 @@ async function seed() {
     console.log("  ✓ Reseñas creadas para todos los profesionales")
 
     console.log("\nSeed completado: 10 clientes + 70 profesionales + reseñas.")
-    await AppDataSource.destroy()
 }
-
-seed().catch(error => {
-    console.error("Error en seed:", error)
-    process.exit(1)
-})
